@@ -18,7 +18,10 @@ public class MapOWLtoNeo4jTest {
 	 */
 	@Test
 	public final void testGetReadableName() {
-		fail("Not yet implemented"); // TODO
+		String tested_phrase= "<http://www.co-ode.org/ontologies/pizza/pizza.owl#Mushroom>";
+		String result = MapOWLtoNeo4j.getReadableName(tested_phrase);
+		assertEquals( "Mushroom", result ); 
+				
 	}
 
 }
