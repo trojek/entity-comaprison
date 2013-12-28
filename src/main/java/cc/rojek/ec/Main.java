@@ -6,6 +6,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 public class Main {
@@ -16,18 +17,15 @@ public class Main {
 	static GraphDatabaseService db;
 
 	public static void main(String[] args) throws Exception {
-		// Get hold of an ontology manager
-		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+		
 		File file = new File(ONTOLOGY_URL);
-
-		// Load the local copy
-		OWLOntology localPizza = manager.loadOntologyFromOntologyDocument(file);
+		OWLOntology ontology = loadOntologyFromFile(file);
 
 		// Initialize database
 		db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
 		registerShutdownHook(db);
 		
-		MapOWLtoNeo4j.importOntology(localPizza, db);
+		MapOWLtoNeo4j.importOntology(ontology, db);
 	}
 	
 	// Method which ensures that the database shut down cleanly
@@ -46,6 +44,19 @@ public class Main {
 	        }
 	    } );
 	}
-	
+
+	private static OWLOntology loadOntologyFromFile(File file){
+		// Get hold of an ontology manager
+				OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+
+				// Load the local copy
+				OWLOntology localPizza = null;
+				try {
+					localPizza = manager.loadOntologyFromOntologyDocument(file);
+				} catch (OWLOntologyCreationException e) {
+					e.printStackTrace();
+				}
+				return localPizza;
+	}
 }
 
