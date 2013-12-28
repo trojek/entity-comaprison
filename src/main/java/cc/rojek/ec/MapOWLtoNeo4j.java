@@ -165,10 +165,8 @@ public class MapOWLtoNeo4j {
 
 	// extract human readable part of string
 	static String getReadableName(String fullName) {
-		String extracted_name;
-		extracted_name = fullName.substring(fullName.indexOf("#") + 1,
+		return fullName.substring(fullName.indexOf("#") + 1,
 				fullName.lastIndexOf(">"));
-		return extracted_name;
 	}
 
 }

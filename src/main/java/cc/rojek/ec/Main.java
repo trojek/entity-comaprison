@@ -11,7 +11,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 public class Main {
 
 	private static final String DB_PATH = "/opt/neo4j/neo4j-community-2.0.0-M06/data/sample.db";
-	private static final String ONTOLOGY_URL = "data/pizza_original.owl";
+	private static final String ONTOLOGY_URL = "data/it.owl";
 
 	static GraphDatabaseService db;
 
@@ -25,10 +25,27 @@ public class Main {
 
 		// Initialize database
 		db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
+		registerShutdownHook(db);
 		
 		MapOWLtoNeo4j.importOntology(localPizza, db);
 	}
-
+	
+	// Method which ensures that the database shut down cleanly
+	private static void registerShutdownHook( final GraphDatabaseService graphDb )
+	{
+	    // Registers a shutdown hook for the Neo4j instance so that it
+	    // shuts down nicely when the VM exits (even if you "Ctrl-C" the
+	    // running application).
+	    Runtime.getRuntime().addShutdownHook( new Thread()
+	    {
+	        @Override
+	        public void run()
+	        {
+	            graphDb.shutdown();
+	            System.out.println("used shut down hook.");
+	        }
+	    } );
+	}
 	
 }
 
