@@ -18,6 +18,9 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
+/**
+ * Map OWL file to Neo4j graph database
+ */
 public class MapOWLtoNeo4j {
 
 	// import ontology from OWL file into Neo4j graph database
@@ -47,6 +50,7 @@ public class MapOWLtoNeo4j {
 				}
 				Node classNode = getOrCreateNodeWithUniqueFactory(classString,
 						db);
+				classNode.setProperty("type", "class");
 
 				/*
 				 * Find out if they have any super classes. If they do, link
@@ -89,6 +93,8 @@ public class MapOWLtoNeo4j {
 					}
 					Node individualNode = getOrCreateNodeWithUniqueFactory(
 							indString, db);
+					individualNode.setProperty("type", "individual");
+
 
 					individualNode.createRelationshipTo(classNode,
 							DynamicRelationshipType.withName("isA"));
