@@ -13,11 +13,14 @@ public class Main {
 
 	private static final String DB_PATH = "/opt/neo4j/neo4j-community-2.0.0-M06/data/sample.db";
 	private static final String ONTOLOGY_URL = "data/it.owl";
-
+	private static final String ADM0 = "data/adm0_test.xml";
+	
 	static GraphDatabaseService db;
 
 	public static void main(String[] args) throws Exception {
 		
+		ADM adm0 = new ADM(ADM0);
+
 		File file = new File(ONTOLOGY_URL);
 		OWLOntology ontology = loadOntologyFromFile(file);
 
