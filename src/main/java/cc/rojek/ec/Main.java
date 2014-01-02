@@ -50,13 +50,13 @@ public class Main {
 				OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
 				// Load the local copy
-				OWLOntology localPizza = null;
+				OWLOntology localOntology = null;
 				try {
-					localPizza = manager.loadOntologyFromOntologyDocument(file);
+					localOntology = manager.loadOntologyFromOntologyDocument(file);
 				} catch (OWLOntologyCreationException e) {
 					e.printStackTrace();
 				}
-				return localPizza;
+				return localOntology;
 	}
 }
 
