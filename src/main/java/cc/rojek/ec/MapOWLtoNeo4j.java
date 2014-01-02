@@ -28,6 +28,7 @@ public class MapOWLtoNeo4j {
 
 		OWLReasoner reasoner = new Reasoner(ontology);
 
+		// Check if ontology is consistent!
 		if (!reasoner.isConsistent()) {
 			// Throw your exception of choice here
 			throw new Exception("Ontology is inconsistent");
@@ -64,7 +65,7 @@ public class MapOWLtoNeo4j {
 
 				if (superclasses.isEmpty()) {
 					classNode.createRelationshipTo(thingNode,
-							DynamicRelationshipType.withName("isA"));
+							DynamicRelationshipType.withName("subClassOf"));
 				} else {
 					for (org.semanticweb.owlapi.reasoner.Node<OWLClass> parentOWLNode : superclasses) {
 
@@ -78,7 +79,7 @@ public class MapOWLtoNeo4j {
 						Node parentNode = getOrCreateNodeWithUniqueFactory(
 								parentString, db);
 						classNode.createRelationshipTo(parentNode,
-								DynamicRelationshipType.withName("isA"));
+								DynamicRelationshipType.withName("subClassOf"));
 					}
 				}
 
@@ -97,7 +98,7 @@ public class MapOWLtoNeo4j {
 
 
 					individualNode.createRelationshipTo(classNode,
-							DynamicRelationshipType.withName("isA"));
+							DynamicRelationshipType.withName("type"));
 
 					/*
 					 * For each individual, get all object properties and all
