@@ -117,12 +117,10 @@ public class MapOWLtoNeo4j {
 								.getObjectPropertyValues(i, objectProperty)) {
 							String reltype = objectProperty.toString();
 							reltype = getReadableName(reltype);
-							System.out.println("r: " + reltype);
 
 							String s = object.getRepresentativeElement()
 									.toString();
 							s = getReadableName(s);
-							System.out.println("s: " + s);
 							Node objectNode = getOrCreateNodeWithUniqueFactory(
 									s, db);
 							individualNode.createRelationshipTo(objectNode,
