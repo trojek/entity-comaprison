@@ -2,7 +2,6 @@ package cc.rojek.ec;
 
 import java.util.Map;
 
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -42,7 +41,7 @@ public class MapOWLtoNeo4j {
 
 			// Create root node of the graph
 			Node thingNode = getOrCreateNodeWithUniqueFactory("owl:Thing", db);
-			DynamicSetLabelOnNode(thingNode, "Root");
+			thingNode.addLabel(Labels.Root);
 
 			// System.out.println(thingNode.getProperty( "name" ).toString());
 
@@ -55,7 +54,7 @@ public class MapOWLtoNeo4j {
 				}
 				Node classNode = getOrCreateNodeWithUniqueFactory(classString,
 						db);
-				DynamicSetLabelOnNode(classNode, "Class");
+				classNode.addLabel(Labels.Class);
 
 				/*
 				 * Find out if they have any super classes. If they do, link
@@ -98,7 +97,7 @@ public class MapOWLtoNeo4j {
 					}
 					Node individualNode = getOrCreateNodeWithUniqueFactory(
 							indString, db);
-					DynamicSetLabelOnNode(individualNode, "Individual");
+					individualNode.addLabel(Labels.Individual);
 
 
 					individualNode.createRelationshipTo(classNode,
@@ -157,7 +156,6 @@ public class MapOWLtoNeo4j {
 	// Create or get node using UniqueFactory (whatever it is?)
 	private static Node getOrCreateNodeWithUniqueFactory(String nodeName, 
 			GraphDatabaseService graphDb) {
-		// "nodeName in here is index in neo4j dbms...
 		UniqueFactory<Node> factory = new UniqueFactory.UniqueNodeFactory(
 				graphDb, "index") {
 			@Override
@@ -182,9 +180,19 @@ public class MapOWLtoNeo4j {
 				fullName.lastIndexOf(">"));
 	}
 	
+	/* Actually I have no need to use this method
+	 * It was replaced by enum labels
+	 * 
 	private static void DynamicSetLabelOnNode(Node node, String label){
 		Label myLabel = DynamicLabel.label(label);
 		node.addLabel(myLabel);
 	}
+	*/
+	
+	private enum Labels implements Label
+	{
+	    Root, Class, Individual
+	}
+	
 
 }
