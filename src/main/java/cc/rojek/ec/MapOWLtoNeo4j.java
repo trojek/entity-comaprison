@@ -2,8 +2,10 @@ package cc.rojek.ec;
 
 import java.util.Map;
 
+import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.UniqueFactory;
@@ -40,6 +42,8 @@ public class MapOWLtoNeo4j {
 
 			// Create root node of the graph
 			Node thingNode = getOrCreateNodeWithUniqueFactory("owl:Thing", db);
+			DynamicSetLabelOnNode(thingNode, "Root");
+
 			// System.out.println(thingNode.getProperty( "name" ).toString());
 
 			// Get all the classes defined in the ontology and add them to the
@@ -51,7 +55,7 @@ public class MapOWLtoNeo4j {
 				}
 				Node classNode = getOrCreateNodeWithUniqueFactory(classString,
 						db);
-				classNode.setProperty("type", "class");
+				DynamicSetLabelOnNode(classNode, "Class");
 
 				/*
 				 * Find out if they have any super classes. If they do, link
@@ -94,7 +98,7 @@ public class MapOWLtoNeo4j {
 					}
 					Node individualNode = getOrCreateNodeWithUniqueFactory(
 							indString, db);
-					individualNode.setProperty("type", "individual");
+					DynamicSetLabelOnNode(individualNode, "Individual");
 
 
 					individualNode.createRelationshipTo(classNode,
@@ -114,10 +118,12 @@ public class MapOWLtoNeo4j {
 								.getObjectPropertyValues(i, objectProperty)) {
 							String reltype = objectProperty.toString();
 							reltype = getReadableName(reltype);
+							System.out.println("r: " + reltype);
 
 							String s = object.getRepresentativeElement()
 									.toString();
 							s = getReadableName(s);
+							System.out.println("s: " + s);
 							Node objectNode = getOrCreateNodeWithUniqueFactory(
 									s, db);
 							individualNode.createRelationshipTo(objectNode,
@@ -149,11 +155,11 @@ public class MapOWLtoNeo4j {
 	}
 
 	// Create or get node using UniqueFactory (whatever it is?)
-	public static Node getOrCreateNodeWithUniqueFactory(String nodeName,
+	private static Node getOrCreateNodeWithUniqueFactory(String nodeName, 
 			GraphDatabaseService graphDb) {
 		// "nodeName in here is index in neo4j dbms...
 		UniqueFactory<Node> factory = new UniqueFactory.UniqueNodeFactory(
-				graphDb, "nodeName") {
+				graphDb, "index") {
 			@Override
 			protected void initialize(Node created,
 					Map<String, Object> properties) {
@@ -174,6 +180,11 @@ public class MapOWLtoNeo4j {
 	static String getReadableName(String fullName) {
 		return fullName.substring(fullName.indexOf("#") + 1,
 				fullName.lastIndexOf(">"));
+	}
+	
+	private static void DynamicSetLabelOnNode(Node node, String label){
+		Label myLabel = DynamicLabel.label(label);
+		node.addLabel(myLabel);
 	}
 
 }
