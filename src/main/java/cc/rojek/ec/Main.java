@@ -17,7 +17,7 @@ public class Main {
 	
 	static GraphDatabaseService db;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		
 		// ADM adm0 = new ADM(ADM0);
 
@@ -28,7 +28,12 @@ public class Main {
 		db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
 		registerShutdownHook(db);
 		
-		MapOWLtoNeo4j.importOntology(ontology, db);
+		try {
+			MapOWLtoNeo4j.importOntology(ontology, db);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	// Method which ensures that the database shut down cleanly

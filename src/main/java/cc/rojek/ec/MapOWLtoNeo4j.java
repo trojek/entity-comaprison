@@ -101,7 +101,7 @@ public class MapOWLtoNeo4j {
 
 
 					individualNode.createRelationshipTo(classNode,
-							DynamicRelationshipType.withName("type"));
+							DynamicRelationshipType.withName("instanceOf"));
 
 					/*
 					 * For each individual, get all object properties and all
