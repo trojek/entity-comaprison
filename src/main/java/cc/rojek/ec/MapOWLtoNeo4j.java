@@ -59,9 +59,7 @@ public class MapOWLtoNeo4j {
 				/*
 				 * Find out if they have any super classes. If they do, link
 				 * them. If they don't, link back to owl:Thing. Make sure only
-				 * to link to the direct super classes! The relationship type
-				 * used to express the rdf:type property is a custom one named
-				 * “isA”.
+				 * to link to the direct super classes!
 				 */
 				NodeSet<OWLClass> superclasses = reasoner.getSuperClasses(c,
 						true);
@@ -106,8 +104,7 @@ public class MapOWLtoNeo4j {
 					/*
 					 * For each individual, get all object properties and all
 					 * data properties. Add them to the graph as node properties
-					 * or relationships. Make sure to get all axioms, not just
-					 * the asserted ones.
+					 * or relationships.
 					 */
 
 					for (OWLObjectPropertyExpression objectProperty : ontology
