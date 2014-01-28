@@ -28,12 +28,13 @@ public class Main {
 		db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
 		registerShutdownHook(db);
 		
-		try {
-			MapOWLtoNeo4j.importOntology(ontology, db);
-		} catch (Exception e) {
+		CompareObject.compareObjects(db);
+		//try {
+		//	MapOWLtoNeo4j.importOntology(ontology, db);
+		//} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//	e.printStackTrace();
+		//}
 	}
 	
 	// Method which ensures that the database shut down cleanly
