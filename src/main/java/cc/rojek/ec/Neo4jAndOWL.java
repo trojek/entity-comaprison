@@ -180,13 +180,6 @@ public class Neo4jAndOWL {
 				fullName.lastIndexOf(">"));
 	}
 
-	/*
-	 * Actually I have no need to use this method It was replaced by enum labels
-	 * 
-	 * private static void DynamicSetLabelOnNode(Node node, String label){ Label
-	 * myLabel = DynamicLabel.label(label); node.addLabel(myLabel); }
-	 */
-
 	private enum Labels implements Label {
 		Root, Class, Individual
 	}
