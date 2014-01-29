@@ -13,59 +13,52 @@ public class Main {
 
 	private static final String DB_PATH = "/home/tomasz/Programy/neo4j-community-2.0.0/data/sample.db";
 	private static final String ONTOLOGY_URL = "data/olympic_games.owl";
-	// private static final String ADM0 = "data/adm0_test.xml";
-	
-	static GraphDatabaseService db;
 
 	public static void main(String[] args) {
-		
-		// ADM adm0 = new ADM(ADM0);
 
-		File file = new File(ONTOLOGY_URL);
-		OWLOntology ontology = loadOntologyFromFile(file);
+		OWLOntology ontology = loadOntologyFromFile(ONTOLOGY_URL);
 
-		// Initialize database
-		db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
+		GraphDatabaseService db = new GraphDatabaseFactory()
+				.newEmbeddedDatabase(DB_PATH);
 		registerShutdownHook(db);
-		
-		CompareObject.compareObjects(db);
-		//try {
-		//	MapOWLtoNeo4j.importOntology(ontology, db);
-		//} catch (Exception e) {
-			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}
+
+		// CompareObject.compareObjects(db);
+
+		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
+
+		mapOntologyIntoNeo4j(exampleon);
+	}
+
+	// Method which ensures that the database shut down cleanly
+	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				graphDb.shutdown();
+				System.out.println("Db shutdown (shutdown hook)");
+			}
+		});
+	}
+
+	private static OWLOntology loadOntologyFromFile(String fileName) {
+		File file = new File(fileName);
+		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+
+		// Load the local copy
+		OWLOntology localOntology = null;
+		try {
+			localOntology = manager.loadOntologyFromOntologyDocument(file);
+		} catch (OWLOntologyCreationException e) {
+			e.printStackTrace();
+		}
+		return localOntology;
 	}
 	
-	// Method which ensures that the database shut down cleanly
-	private static void registerShutdownHook( final GraphDatabaseService graphDb )
-	{
-	    // Registers a shutdown hook for the Neo4j instance so that it
-	    // shuts down nicely when the VM exits (even if you "Ctrl-C" the
-	    // running application).
-	    Runtime.getRuntime().addShutdownHook( new Thread()
-	    {
-	        @Override
-	        public void run()
-	        {
-	            graphDb.shutdown();
-	            System.out.println("used shut down hook.");
-	        }
-	    } );
-	}
-
-	private static OWLOntology loadOntologyFromFile(File file){
-		// Get hold of an ontology manager
-				OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-
-				// Load the local copy
-				OWLOntology localOntology = null;
-				try {
-					localOntology = manager.loadOntologyFromOntologyDocument(file);
-				} catch (OWLOntologyCreationException e) {
-					e.printStackTrace();
-				}
-				return localOntology;
+	private static void mapOntologyIntoNeo4j(Neo4jAndOWL obj) {
+		try {
+			obj.importOntology();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
-

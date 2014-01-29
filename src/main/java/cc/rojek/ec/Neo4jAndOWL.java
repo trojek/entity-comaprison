@@ -22,20 +22,32 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 /**
  * Map OWL file to Neo4j graph database
  */
-public class MapOWLtoNeo4j {
+public class Neo4jAndOWL {
+
+	static GraphDatabaseService db;
+	static OWLOntology ontology;
+	static OWLReasoner reasoner;
+
+	Neo4jAndOWL(GraphDatabaseService db, OWLOntology ontology) {
+		Neo4jAndOWL.db = db;
+		Neo4jAndOWL.ontology = ontology;
+		Neo4jAndOWL.reasoner = new Reasoner(ontology);
+	}
 
 	// import ontology from OWL file into Neo4j graph database
-	static void importOntology(OWLOntology ontology, GraphDatabaseService db) throws Exception {
-
-		OWLReasoner reasoner = new Reasoner(ontology);
+	void importOntology() throws Exception {
 
 		// Check if ontology is consistent!
 		if (!reasoner.isConsistent()) {
 			// Throw your exception of choice here
 			throw new Exception("Ontology is inconsistent");
 		}
-		
+
 		// begin transaction
+		moveData();
+	}
+
+	private static void moveData() {
 		try (Transaction tx = db.beginTx()) {
 			System.out.println("Transaction begin.");
 
@@ -97,7 +109,6 @@ public class MapOWLtoNeo4j {
 							indString, db);
 					individualNode.addLabel(Labels.Individual);
 
-
 					individualNode.createRelationshipTo(classNode,
 							DynamicRelationshipType.withName("instanceOf"));
 
@@ -143,13 +154,13 @@ public class MapOWLtoNeo4j {
 			}
 
 			tx.success();
-		}
+			System.out.println("Transaction finished.");
 
-		shutDown(db);
+		}
 	}
 
 	// Create or get node using UniqueFactory (whatever it is?)
-	private static Node getOrCreateNodeWithUniqueFactory(String nodeName, 
+	private static Node getOrCreateNodeWithUniqueFactory(String nodeName,
 			GraphDatabaseService graphDb) {
 		UniqueFactory<Node> factory = new UniqueFactory.UniqueNodeFactory(
 				graphDb, "index") {
@@ -163,31 +174,21 @@ public class MapOWLtoNeo4j {
 		return factory.getOrCreate("name", nodeName);
 	}
 
-	// Shutdown database connection
-	static void shutDown(GraphDatabaseService db) {
-		db.shutdown();
-		System.out.println("Shut down.");
-	}
-
 	// extract human readable part of string
 	static String getReadableName(String fullName) {
 		return fullName.substring(fullName.indexOf("#") + 1,
 				fullName.lastIndexOf(">"));
 	}
-	
-	/* Actually I have no need to use this method
-	 * It was replaced by enum labels
+
+	/*
+	 * Actually I have no need to use this method It was replaced by enum labels
 	 * 
-	private static void DynamicSetLabelOnNode(Node node, String label){
-		Label myLabel = DynamicLabel.label(label);
-		node.addLabel(myLabel);
+	 * private static void DynamicSetLabelOnNode(Node node, String label){ Label
+	 * myLabel = DynamicLabel.label(label); node.addLabel(myLabel); }
+	 */
+
+	private enum Labels implements Label {
+		Root, Class, Individual
 	}
-	*/
-	
-	private enum Labels implements Label
-	{
-	    Root, Class, Individual
-	}
-	
 
 }
