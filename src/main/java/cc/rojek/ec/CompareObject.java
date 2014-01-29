@@ -12,10 +12,17 @@ import org.neo4j.helpers.collection.IteratorUtil;
 public class CompareObject {
 
 	static long nodeResult;
+	static ExecutionEngine engine;
+	static GraphDatabaseService db;
+	
+	CompareObject(GraphDatabaseService db){
+		CompareObject.db = db;
+	}
+	
 
-	public static void compareObjects(GraphDatabaseService db) {
+	public static void compareObjects() {
 
-		ExecutionEngine engine = new ExecutionEngine(db);
+		engine = new ExecutionEngine(db);
 
 		ExecutionResult id;
 
