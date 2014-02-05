@@ -1,19 +1,17 @@
 package cc.rojek.ec;
 
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
 
 public class CompareObject {
 
-	static long nodeResult;
 	static ExecutionEngine engine;
 	static GraphDatabaseService db;
 
@@ -31,32 +29,30 @@ public class CompareObject {
 
 			Iterator<Node> n_column = id.columnAs("individuals");
 			for (Node node : IteratorUtil.asIterable(n_column)) {
-				nodeResult = node.getId();
-				System.out.println(nodeResult);
-				getAllPathBetweenRootAndNode(nodeResult);
+				long node_id = node.getId();
+				System.out.println(node_id);
+				getAllPathBetweenRootAndNode(node_id);
 			}
 
 			takeNodesID.success();
 		}
-
 	}
 
 	private static void getAllPathBetweenRootAndNode(long nodeResult2) {
 
 		try (Transaction getAllPath = db.beginTx()) {
+			
 			String query = "START a=node(" + nodeResult2
 					+ "), d=node(0) MATCH allPaths=a-[*]->d RETURN allPaths";
 			ExecutionResult result = engine.execute(query);
 
-			for (Map<String, Object> map : result) {
-
-				for (Entry<String, Object> entry : map.entrySet()) {
-					System.out.println(entry.getKey() + "/     " + entry.getValue());
+			Iterator<Path> n_column = result.columnAs("allPaths");
+			for (Path path : IteratorUtil.asIterable(n_column)) {
+				Iterable<Node> nodeResult = path.nodes();
+				for (Node node : nodeResult) {
+					System.out.println("-- " + node.getId());
 				}
-
-				;
 			}
-
 			getAllPath.success();
 		}
 	}
