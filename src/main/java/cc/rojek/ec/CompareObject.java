@@ -1,6 +1,8 @@
 package cc.rojek.ec;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -14,25 +16,24 @@ public class CompareObject {
 	static long nodeResult;
 	static ExecutionEngine engine;
 	static GraphDatabaseService db;
-	
-	CompareObject(GraphDatabaseService db){
+
+	CompareObject(GraphDatabaseService db) {
 		CompareObject.db = db;
-	}
-	
-
-	public static void compareObjects() {
-
 		engine = new ExecutionEngine(db);
+	}
 
-		ExecutionResult id;
+	public static void compareObjects(int object_id) {
 
 		try (Transaction takeNodesID = db.beginTx()) {
-			id = engine.execute("MATCH (n:Individual) RETURN n");
+			String query = "MATCH (individuals:Individual) RETURN individuals";
 
-			Iterator<Node> n_column = id.columnAs("n");
+			ExecutionResult id = engine.execute(query);
+
+			Iterator<Node> n_column = id.columnAs("individuals");
 			for (Node node : IteratorUtil.asIterable(n_column)) {
 				nodeResult = node.getId();
-				//getAllPathBetweenRootAndNode(engine, db, nodeResult);
+				System.out.println(nodeResult);
+				getAllPathBetweenRootAndNode(nodeResult);
 			}
 
 			takeNodesID.success();
@@ -40,22 +41,23 @@ public class CompareObject {
 
 	}
 
-	/*private static void getAllPathBetweenRootAndNode(ExecutionEngine engine,
-			GraphDatabaseService db, long nodeResult2) {
-
-		ExecutionResult result;
+	private static void getAllPathBetweenRootAndNode(long nodeResult2) {
 
 		try (Transaction getAllPath = db.beginTx()) {
-			result = engine.execute("START a=node(" + nodeResult2
-					+ "), d=node(0) MATCH p=a-[*]->d RETURN p");
+			String query = "START a=node(" + nodeResult2
+					+ "), d=node(0) MATCH allPaths=a-[*]->d RETURN allPaths";
+			ExecutionResult result = engine.execute(query);
 
-			Iterator<Node> n_column = result.columnAs("p");
-			for (Node node : IteratorUtil.asIterable(n_column)) {
-				nodeResult = node.getId();
-				System.out.println(nodeResult);
+			for (Map<String, Object> map : result) {
+
+				for (Entry<String, Object> entry : map.entrySet()) {
+					System.out.println(entry.getKey() + "/     " + entry.getValue());
+				}
+
+				;
 			}
 
 			getAllPath.success();
 		}
-	}*/
+	}
 }

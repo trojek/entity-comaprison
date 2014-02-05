@@ -31,7 +31,7 @@ public class Neo4jAndOWL {
 	Neo4jAndOWL(GraphDatabaseService db, OWLOntology ontology) {
 		Neo4jAndOWL.db = db;
 		Neo4jAndOWL.ontology = ontology;
-		Neo4jAndOWL.reasoner = new Reasoner(ontology);
+		reasoner = new Reasoner(ontology);
 	}
 
 	// import ontology from OWL file into Neo4j graph database

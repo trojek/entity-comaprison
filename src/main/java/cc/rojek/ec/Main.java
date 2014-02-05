@@ -22,11 +22,12 @@ public class Main {
 				.newEmbeddedDatabase(DB_PATH);
 		registerShutdownHook(db);
 
-		// CompareObject.compareObjects(db);
+		// Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
 
-		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
-
-		mapOntologyIntoNeo4j(exampleon);
+		// mapOntologyIntoNeo4j(exampleon);
+		
+		CompareObject compareResult = new CompareObject(db);
+		CompareObject.compareObjects(1);
 	}
 
 	// Method which ensures that the database shut down cleanly
