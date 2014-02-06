@@ -38,19 +38,23 @@ public class CompareObject {
 		}
 	}
 
-	private static void getAllPathBetweenRootAndNode(long nodeResult2) {
+	private static void getAllPathBetweenRootAndNode(long inviduvualNode) {
 
 		try (Transaction getAllPath = db.beginTx()) {
 			
-			String query = "START a=node(" + nodeResult2
+			String query = "START a=node(" + inviduvualNode
 					+ "), d=node(0) MATCH allPaths=a-[*]->d RETURN allPaths";
 			ExecutionResult result = engine.execute(query);
 
-			Iterator<Path> n_column = result.columnAs("allPaths");
-			for (Path path : IteratorUtil.asIterable(n_column)) {
+			Iterator<Path> allPaths_column = result.columnAs("allPaths");
+			for (Path path : IteratorUtil.asIterable(allPaths_column)) {
 				Iterable<Node> nodeResult = path.nodes();
 				for (Node node : nodeResult) {
-					System.out.println("-- " + node.getId());
+					if (inviduvualNode == node.getId()){
+						System.out.println("   ");
+					} else {
+						System.out.println("-- " + node.getId());
+					}
 				}
 			}
 			getAllPath.success();
