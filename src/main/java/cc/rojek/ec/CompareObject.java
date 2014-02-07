@@ -74,4 +74,20 @@ public class CompareObject {
 			getAllPath.success();
 		}
 	}
+	
+	public void groupObject (int id) {
+		 
+	}
+	
+	public static Long[] getAllUniqeGroup(){
+		ArrayList<Long> uniqeGroup = new ArrayList<Long>();
+		for(Pathway path : listOfPathways) {
+			if (!uniqeGroup.contains(path.groupId)) {
+			uniqeGroup.add(path.groupId);
+			}
+		 }
+		Long[] list = uniqeGroup.toArray(new Long[uniqeGroup.size()]);
+		return list;
+		
+	}
 }
