@@ -40,7 +40,7 @@ public class CompareObject {
 			takeNodesID.success();
 		}
 		
-		listOfPathways.get(0).print();
+		//System.out.println(listOfPathways.get(0).toString());
 		
 	}
 
@@ -55,7 +55,7 @@ public class CompareObject {
 			Iterator<Path> allPaths_column = result.columnAs("allPaths");
 			for (Path path : IteratorUtil.asIterable(allPaths_column)) {
 				Pathway pw = new Pathway(individualNode);
-				System.out.println("Path with id: " + individualNode + " has been created");
+				// System.out.println("Path with id: " + individualNode + " has been created");
 				Iterable<Node> nodeResult = path.nodes();
 				int pl = path.length();
 				int counter = 0;
@@ -65,10 +65,9 @@ public class CompareObject {
 					} else if (counter > 1 && counter < pl) {
 						pw.add(node.getId());
 					}
-					System.out.print(" -> " + node.getId());
+					// System.out.print(" -> " + node.getId());
 					counter++;
 				}
-				System.out.println(" ");
 				listOfPathways.add(pw); 
 
 			}

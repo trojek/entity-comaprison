@@ -20,9 +20,13 @@ public class Pathway {
 		path.add(l);
 	}
 	
-	public void print(){
+	public String toString(){
+		String str ="";
 		for (Long s : path) {
-		    System.out.println(s);
+		    str += "-> " + s;
 		}
+		return str;
 	}
+	
+	
 }
