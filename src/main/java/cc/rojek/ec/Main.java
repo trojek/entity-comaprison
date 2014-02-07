@@ -27,7 +27,7 @@ public class Main {
 		// mapOntologyIntoNeo4j(exampleon);
 		
 		CompareObject compareResult = new CompareObject(db);
-		CompareObject.compareObjects(1);
+		CompareObject.compareObjects(13);
 	}
 
 	// Method which ensures that the database shut down cleanly

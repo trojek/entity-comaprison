@@ -26,7 +26,6 @@ public class CompareObject {
 
 		ArrayList<Long> objectIds = new ArrayList<Long>();
 
-		
 		try (Transaction takeNodesID = db.beginTx()) {
 			String query = "MATCH (individuals:Individual) RETURN individuals";
 
@@ -44,12 +43,24 @@ public class CompareObject {
 
 		// System.out.println(listOfPathways.get(0).toString());
 		Long[] listOfObjectId = objectIds.toArray(new Long[objectIds.size()]);
-		
+
 		Long[] groups = getAllUniqeGroup();
-		for(Long group : groups) {
-			for(Long objectId : listOfObjectId) {
-				
+
+		ArrayList<ArrayList<Integer>> listOfCompare = new ArrayList<ArrayList<Integer>>();
+		for (Long group : groups) {
+			ArrayList<Integer> listForGroup = new ArrayList<Integer>();
+			Pathway base = findPathwayWhere(cObjectId, group);
+			for (Long objectId : listOfObjectId) {
+				listForGroup.add(countPoints(base, findPathwayWhere(objectId, group)));
 			}
+			listOfCompare.add(listForGroup);
+		}
+
+		for (ArrayList<Integer> level0 : listOfCompare) {
+			for(int level1 : level0){
+				System.out.print(level1 + " ");
+			}
+			System.out.println();
 		}
 
 	}
@@ -101,24 +112,24 @@ public class CompareObject {
 		Long[] list = uniqeGroup.toArray(new Long[uniqeGroup.size()]);
 		return list;
 	}
-	
-	public static Pathway findPathwayWhere(long objectId, long groupId){
+
+	public static Pathway findPathwayWhere(long objectId, long groupId) {
 		Pathway pathway = null;
-		for(Pathway pw: listOfPathways){
-			if(pw.groupId==groupId && pw.individualId==objectId){
+		for (Pathway pw : listOfPathways) {
+			if (pw.groupId == groupId && pw.individualId == objectId) {
 				pathway = pw;
 				break;
 			}
 		}
 		return pathway;
 	}
-	
-	public static int countPoints(Pathway base, Pathway extra){
+
+	public static int countPoints(Pathway base, Pathway extra) {
 		int counter = 0;
-		for(int i = 0;i< base.path.size(); i++){
-			if(base.path.get(i)==extra.path.get(i)){
+		for (int i = 0; i < base.path.size(); i++) {
+			if (base.path.get(i) == extra.path.get(i)) {
 				counter++;
-			}			
+			}
 		}
 		return counter;
 	}
