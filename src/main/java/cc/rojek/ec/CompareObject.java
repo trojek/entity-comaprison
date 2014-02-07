@@ -22,7 +22,7 @@ public class CompareObject {
 		engine = new ExecutionEngine(db);
 	}
 
-	public static void compareObjects(int object_id) {
+	public static void compareObjects(int cObjectId) {
 
 		ArrayList<Long> objectIds = new ArrayList<Long>();
 
@@ -45,7 +45,12 @@ public class CompareObject {
 		// System.out.println(listOfPathways.get(0).toString());
 		Long[] listOfObjectId = objectIds.toArray(new Long[objectIds.size()]);
 		
-		//System.out.println(findPathwayWhere(3,8).toString());
+		Long[] groups = getAllUniqeGroup();
+		for(Long group : groups) {
+			for(Long objectId : listOfObjectId) {
+				
+			}
+		}
 
 	}
 
@@ -106,5 +111,15 @@ public class CompareObject {
 			}
 		}
 		return pathway;
+	}
+	
+	public static int countPoints(Pathway base, Pathway extra){
+		int counter = 0;
+		for(int i = 0;i< base.path.size(); i++){
+			if(base.path.get(i)==extra.path.get(i)){
+				counter++;
+			}			
+		}
+		return counter;
 	}
 }
