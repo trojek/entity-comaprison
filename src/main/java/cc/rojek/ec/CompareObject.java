@@ -1,5 +1,6 @@
 package cc.rojek.ec;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -14,6 +15,8 @@ public class CompareObject {
 
 	static ExecutionEngine engine;
 	static GraphDatabaseService db;
+	static ArrayList<Pathway> listOfPathways = new ArrayList<Pathway>(); 
+
 
 	CompareObject(GraphDatabaseService db) {
 		CompareObject.db = db;
@@ -21,7 +24,8 @@ public class CompareObject {
 	}
 
 	public static void compareObjects(int object_id) {
-
+		
+		
 		try (Transaction takeNodesID = db.beginTx()) {
 			String query = "MATCH (individuals:Individual) RETURN individuals";
 
@@ -30,32 +34,36 @@ public class CompareObject {
 			Iterator<Node> n_column = id.columnAs("individuals");
 			for (Node node : IteratorUtil.asIterable(n_column)) {
 				long node_id = node.getId();
-				System.out.println(node_id);
 				getAllPathBetweenRootAndNode(node_id);
 			}
 
 			takeNodesID.success();
 		}
+		
+		listOfPathways.get(0).print();
+		
 	}
 
 	private static void getAllPathBetweenRootAndNode(long inviduvualNode) {
 
 		try (Transaction getAllPath = db.beginTx()) {
 			
-			String query = "START a=node(" + inviduvualNode
-					+ "), d=node(0) MATCH allPaths=a-[*]->d RETURN allPaths";
+			String query = "START indv=node(" + inviduvualNode
+					+ "), root=node(0) MATCH allPaths=root<-[*]-indv RETURN allPaths";
 			ExecutionResult result = engine.execute(query);
 
 			Iterator<Path> allPaths_column = result.columnAs("allPaths");
 			for (Path path : IteratorUtil.asIterable(allPaths_column)) {
+				Pathway pw = new Pathway(inviduvualNode);
+				System.out.println("Path with id: " + inviduvualNode + " has been created");
 				Iterable<Node> nodeResult = path.nodes();
 				for (Node node : nodeResult) {
-					if (inviduvualNode == node.getId()){
-						System.out.println("   ");
-					} else {
-						System.out.println("-- " + node.getId());
-					}
+					pw.add(node.getId());
+					System.out.print(" -> " + node.getId());
 				}
+				System.out.println(" ");
+				listOfPathways.add(pw); 
+
 			}
 			getAllPath.success();
 		}
