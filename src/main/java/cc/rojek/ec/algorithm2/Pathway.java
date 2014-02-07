@@ -1,4 +1,4 @@
-package cc.rojek.ec;
+package cc.rojek.ec.algorithm2;
 
 import java.util.ArrayList;
 

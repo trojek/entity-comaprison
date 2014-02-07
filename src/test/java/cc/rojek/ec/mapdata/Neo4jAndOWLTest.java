@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cc.rojek.ec;
+package cc.rojek.ec.mapdata;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -17,15 +17,17 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
+import cc.rojek.ec.mapdata.Neo4jAndOWL;
+
 /**
  * @author tomasz
  *
  */
-public class MapOWLtoNeo4jTest {
+public class Neo4jAndOWLTest {
 
 	protected GraphDatabaseService graphDb;
 	/**
-	 * Test method for {@link cc.rojek.ec.Neo4jAndOWL#getReadableName(java.lang.String)}.
+	 * Test method for {@link cc.rojek.ec.mapdata.Neo4jAndOWL#getReadableName(java.lang.String)}.
 	 */
 	@Test
 	public final void testGetReadableName() {

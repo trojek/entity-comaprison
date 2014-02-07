@@ -9,6 +9,10 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
+import cc.rojek.ec.algorithm2.CompareObject;
+import cc.rojek.ec.mapdata.Neo4jAndOWL;
+import cc.rojek.ec.mapdata.Neo4jAndOWLTest;
+
 public class Main {
 
 	private static final String DB_PATH = "/home/tomasz/Programy/neo4j-community-2.0.0/data/sample.db";

@@ -1,4 +1,4 @@
-package cc.rojek.ec;
+package cc.rojek.ec.algorithm1;
 
 import java.io.File;
 

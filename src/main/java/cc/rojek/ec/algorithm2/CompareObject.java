@@ -1,4 +1,4 @@
-package cc.rojek.ec;
+package cc.rojek.ec.algorithm2;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,13 +11,14 @@ import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
 
+
 public class CompareObject {
 
 	static ExecutionEngine engine;
 	static GraphDatabaseService db;
 	static ArrayList<Pathway> listOfPathways = new ArrayList<Pathway>();
 
-	CompareObject(GraphDatabaseService db) {
+	public CompareObject(GraphDatabaseService db) {
 		CompareObject.db = db;
 		engine = new ExecutionEngine(db);
 	}
@@ -41,7 +42,6 @@ public class CompareObject {
 			takeNodesID.success();
 		}
 
-		// System.out.println(listOfPathways.get(0).toString());
 		Long[] listOfObjectId = objectIds.toArray(new Long[objectIds.size()]);
 
 		Long[] groups = getAllUniqeGroup();

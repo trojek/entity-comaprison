@@ -1,4 +1,4 @@
-package cc.rojek.ec;
+package cc.rojek.ec.mapdata;
 
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class Neo4jAndOWL {
 	}
 
 	// import ontology from OWL file into Neo4j graph database
-	void importOntology() throws Exception {
+	public void importOntology() throws Exception {
 
 		// Check if ontology is consistent!
 		if (!reasoner.isConsistent()) {
@@ -186,7 +186,7 @@ public class Neo4jAndOWL {
 	}
 
 	// extract human readable part of string
-	static String getReadableName(String fullName) {
+	public static String getReadableName(String fullName) {
 		return fullName.substring(fullName.indexOf("#") + 1,
 				fullName.lastIndexOf(">"));
 	}
