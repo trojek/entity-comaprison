@@ -12,6 +12,10 @@ public class Pathway {
 		this.individualId = individualId;
 	}
 	
+	public void setGroupId(long groupId) {
+		this.groupId = groupId;
+	}
+	
 	public void add(long l) {
 		path.add(l);
 	}

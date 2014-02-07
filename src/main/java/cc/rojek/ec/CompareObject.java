@@ -44,22 +44,29 @@ public class CompareObject {
 		
 	}
 
-	private static void getAllPathBetweenRootAndNode(long inviduvualNode) {
+	private static void getAllPathBetweenRootAndNode(long individualNode) {
 
 		try (Transaction getAllPath = db.beginTx()) {
 			
-			String query = "START indv=node(" + inviduvualNode
+			String query = "START indv=node(" + individualNode
 					+ "), root=node(0) MATCH allPaths=root<-[*]-indv RETURN allPaths";
 			ExecutionResult result = engine.execute(query);
 
 			Iterator<Path> allPaths_column = result.columnAs("allPaths");
 			for (Path path : IteratorUtil.asIterable(allPaths_column)) {
-				Pathway pw = new Pathway(inviduvualNode);
-				System.out.println("Path with id: " + inviduvualNode + " has been created");
+				Pathway pw = new Pathway(individualNode);
+				System.out.println("Path with id: " + individualNode + " has been created");
 				Iterable<Node> nodeResult = path.nodes();
+				int pl = path.length();
+				int counter = 0;
 				for (Node node : nodeResult) {
-					pw.add(node.getId());
+					if(counter==1){
+						pw.setGroupId(node.getId());
+					} else if (counter > 1 && counter < pl) {
+						pw.add(node.getId());
+					}
 					System.out.print(" -> " + node.getId());
+					counter++;
 				}
 				System.out.println(" ");
 				listOfPathways.add(pw); 
