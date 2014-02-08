@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import cc.rojek.ec.algorithm2.CompareObject;
 import cc.rojek.ec.mapdata.Neo4jAndOWL;
-import cc.rojek.ec.mapdata.Neo4jAndOWLTest;
 
 public class Main {
 
@@ -30,8 +29,8 @@ public class Main {
 
 		// mapOntologyIntoNeo4j(exampleon);
 		
-		CompareObject compareResult = new CompareObject(db);
-		CompareObject.compareObjectsWith(13);
+		CompareObject compareResult = new CompareObject(db, 13l);
+		compareResult.compareObjectsWith();
 	}
 
 	// Method which ensures that the database shut down cleanly
