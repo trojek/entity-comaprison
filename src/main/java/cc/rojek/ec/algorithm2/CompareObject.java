@@ -25,12 +25,14 @@ public class CompareObject {
 
 	public static void compareObjectsWith(int cObjectId) {
 
-		ArrayList<Long> listOfObjectId = getNodesAndPaths();
+		ArrayList<Long> listOfObjectId = getAllIndividualNodes();
+		
+		setAllPaths(listOfObjectId);
 
-		Long[] groups = getAllUniqeGroup();
+		ArrayList<Long> listOfGroups = getAllUniqeGroup();
 
 		ArrayList<ArrayList<Integer>> listOfCompare = new ArrayList<ArrayList<Integer>>();
-		for (Long group : groups) {
+		for (Long group : listOfGroups) {
 			ArrayList<Integer> listForGroup = new ArrayList<Integer>();
 			Pathway base = findPathwayWhere(cObjectId, group);
 			for (Long objectId : listOfObjectId) {
@@ -48,7 +50,13 @@ public class CompareObject {
 
 	}
 
-	private static ArrayList<Long> getNodesAndPaths(){
+	private static void setAllPaths(ArrayList<Long> ids){
+		for(Long objId : ids){
+			getAllPathBetweenRootNodeAndIndividualNode(objId);
+		}
+	}
+	
+	private static ArrayList<Long> getAllIndividualNodes(){
 		ArrayList<Long> objectIds = new ArrayList<Long>();
 
 		try (Transaction takeNodesID = db.beginTx()) {
@@ -58,15 +66,13 @@ public class CompareObject {
 
 			Iterator<Node> n_column = id.columnAs("individuals");
 			for (Node node : IteratorUtil.asIterable(n_column)) {
-				long node_id = node.getId();
-				objectIds.add(node_id);
-				getAllPathBetweenRootNodeAndIndividualNode(node_id);
+				objectIds.add(node.getId());
 			}
-
 			takeNodesID.success();
 		}
 		return objectIds;
 	}
+	
 	private static void getAllPathBetweenRootNodeAndIndividualNode(long individualNode) {
 
 		try (Transaction getAllPath = db.beginTx()) {
@@ -100,15 +106,14 @@ public class CompareObject {
 		}
 	}
 
-	public static Long[] getAllUniqeGroup() {
-		ArrayList<Long> uniqeGroup = new ArrayList<Long>();
+	public static ArrayList<Long> getAllUniqeGroup() {
+		ArrayList<Long> uniqeGroupList = new ArrayList<Long>();
 		for (Pathway path : listOfPathways) {
-			if (!uniqeGroup.contains(path.groupId)) {
-				uniqeGroup.add(path.groupId);
+			if (!uniqeGroupList.contains(path.groupId)) {
+				uniqeGroupList.add(path.groupId);
 			}
 		}
-		Long[] list = uniqeGroup.toArray(new Long[uniqeGroup.size()]);
-		return list;
+		return uniqeGroupList;
 	}
 
 	public static Pathway findPathwayWhere(long objectId, long groupId) {
