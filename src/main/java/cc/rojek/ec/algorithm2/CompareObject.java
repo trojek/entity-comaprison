@@ -23,26 +23,9 @@ public class CompareObject {
 		engine = new ExecutionEngine(db);
 	}
 
-	public static void compareObjects(int cObjectId) {
+	public static void compareObjectsWith(int cObjectId) {
 
-		ArrayList<Long> objectIds = new ArrayList<Long>();
-
-		try (Transaction takeNodesID = db.beginTx()) {
-			String query = "MATCH (individuals:Individual) RETURN individuals";
-
-			ExecutionResult id = engine.execute(query);
-
-			Iterator<Node> n_column = id.columnAs("individuals");
-			for (Node node : IteratorUtil.asIterable(n_column)) {
-				long node_id = node.getId();
-				objectIds.add(node_id);
-				getAllPathBetweenRootAndNode(node_id);
-			}
-
-			takeNodesID.success();
-		}
-
-		Long[] listOfObjectId = objectIds.toArray(new Long[objectIds.size()]);
+		ArrayList<Long> listOfObjectId = getNodesAndPaths();
 
 		Long[] groups = getAllUniqeGroup();
 
@@ -65,7 +48,26 @@ public class CompareObject {
 
 	}
 
-	private static void getAllPathBetweenRootAndNode(long individualNode) {
+	private static ArrayList<Long> getNodesAndPaths(){
+		ArrayList<Long> objectIds = new ArrayList<Long>();
+
+		try (Transaction takeNodesID = db.beginTx()) {
+			String query = "MATCH (individuals:Individual) RETURN individuals";
+
+			ExecutionResult id = engine.execute(query);
+
+			Iterator<Node> n_column = id.columnAs("individuals");
+			for (Node node : IteratorUtil.asIterable(n_column)) {
+				long node_id = node.getId();
+				objectIds.add(node_id);
+				getAllPathBetweenRootNodeAndIndividualNode(node_id);
+			}
+
+			takeNodesID.success();
+		}
+		return objectIds;
+	}
+	private static void getAllPathBetweenRootNodeAndIndividualNode(long individualNode) {
 
 		try (Transaction getAllPath = db.beginTx()) {
 
@@ -96,10 +98,6 @@ public class CompareObject {
 			}
 			getAllPath.success();
 		}
-	}
-
-	public void groupObject(int id) {
-
 	}
 
 	public static Long[] getAllUniqeGroup() {
