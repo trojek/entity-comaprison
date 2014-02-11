@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import cc.rojek.ec.algorithm2.CompareObject;
+import cc.rojek.ec.application_domain_model.ApplicationDomainModel;
 import cc.rojek.ec.mapdata.Neo4jAndOWL;
 
 public class Main {
@@ -19,7 +20,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		OWLOntology ontology = loadOntologyFromFile(ONTOLOGY_URL);
+		//OWLOntology ontology = loadOntologyFromFile(ONTOLOGY_URL);
 
 		GraphDatabaseService db = new GraphDatabaseFactory()
 				.newEmbeddedDatabase(DB_PATH);
@@ -29,8 +30,14 @@ public class Main {
 
 		// mapOntologyIntoNeo4j(exampleon);
 		
-		CompareObject compareResult = new CompareObject(db, 13l);
-		compareResult.compareObjectsWith();
+		//CompareObject compareResult = new CompareObject(db, 13l);
+		//WcompareResult.compareObjectsWith();
+		
+		
+		String json = "{'China' : 'Beijing','Summer' : 'Beijing'}";
+		ApplicationDomainModel test = new ApplicationDomainModel("olympic");
+		test.addData(json, "objects");
+		test.printData("objects");
 	}
 
 	// Method which ensures that the database shut down cleanly
