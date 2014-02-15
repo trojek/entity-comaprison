@@ -28,7 +28,7 @@ public class Neo4jAndOWL {
 	static OWLOntology ontology;
 	static OWLReasoner reasoner;
 
-	Neo4jAndOWL(GraphDatabaseService db, OWLOntology ontology) {
+	public Neo4jAndOWL(GraphDatabaseService db, OWLOntology ontology) {
 		Neo4jAndOWL.db = db;
 		Neo4jAndOWL.ontology = ontology;
 		reasoner = new Reasoner(ontology);
