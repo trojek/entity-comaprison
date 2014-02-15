@@ -23,16 +23,19 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 
-		OWLOntology ontology = OntologyHelper.loadOntologyFromFile(ONTOLOGY_URL);
+		//OWLOntology ontology = OntologyHelper.loadOntologyFromFile(ONTOLOGY_URL);
 
-		GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
+		//GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
 
-		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
+		//Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
 
-		exampleon.importOntology();
+		//exampleon.importOntology();
 		
 		//CompareObject compareResult = new CompareObject(db, 13l);
 		//WcompareResult.compareObjectsWith();
+		
+		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
+		jOnto.createIndividualNodeConnectedToClass("object10", "Vancouver");
 		
 		//String json = "{'object' : 'object1', 'name' : 'Turin', connections: { 'Location' : 'Italy', 'Season' : 'Summer' } } }";
 		//ApplicationDomainModel test = new ApplicationDomainModel("olympic");
