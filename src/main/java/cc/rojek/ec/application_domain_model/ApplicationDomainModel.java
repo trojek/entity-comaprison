@@ -1,6 +1,9 @@
 package cc.rojek.ec.application_domain_model;
 
 import java.net.UnknownHostException;
+import java.util.Set;
+
+import org.json.JSONObject;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -11,7 +14,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 public class ApplicationDomainModel {
-	
+
 	DB db;
 
 	public ApplicationDomainModel(String dbName) {
@@ -29,23 +32,41 @@ public class ApplicationDomainModel {
 
 	public void addData(String data, String collectionName) {
 		DBCollection collection = db.getCollection(collectionName);
-		
-		DBObject dbObject = (DBObject)JSON.parse(data);
-		 
-		collection.insert(dbObject);
 
+		DBObject dbObject = (DBObject) JSON.parse(data);
+
+		collection.insert(dbObject);
 	}
-	
-	public void printData(String collectionName){
+
+	public void printData(String collectionName) {
 		DBCollection table = db.getCollection(collectionName);
 
-		BasicDBObject searchQuery = new BasicDBObject();
-
-		DBCursor cursor = table.find(searchQuery);
+		DBCursor cursor = table.find();
 
 		while (cursor.hasNext()) {
-			System.out.println(cursor.next());
+			DBObject object = cursor.next();
+			DBObject object_connections = (DBObject) object.get("connections");
+			System.out.println(object.get("object"));
+			Set<String> x = object_connections.keySet();
+			for (String z : x) {
+				System.out.println("   " + object_connections.get(z));
+			}
 		}
 	}
-	
+
+	public void joinObjectNodesWithOntology(String collectionName) {
+		DBCollection table = db.getCollection(collectionName);
+
+		DBCursor cursor = table.find();
+
+		while (cursor.hasNext()) {
+			DBObject object = cursor.next();
+			DBObject object_connections = (DBObject) object.get("connections");
+			System.out.println(object.get("object"));
+			Set<String> x = object_connections.keySet();
+			for (String z : x) {
+				System.out.println("   " + object_connections.get(z));
+			}
+		}
+	}
 }

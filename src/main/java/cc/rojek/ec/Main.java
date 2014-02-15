@@ -34,9 +34,9 @@ public class Main {
 		//WcompareResult.compareObjectsWith();
 		
 		
-		String json = "{'China' : 'Beijing','Summer' : 'Beijing'}";
+		String json = "{'object' : 'object1', 'name' : 'Turin', connections: { 'Location' : 'Italy', 'Season' : 'Summer' } } }";
 		ApplicationDomainModel test = new ApplicationDomainModel("olympic");
-		test.addData(json, "objects");
+		//test.addData(json, "objects");
 		test.printData("objects");
 	}
 
@@ -46,7 +46,7 @@ public class Main {
 			@Override
 			public void run() {
 				graphDb.shutdown();
-				System.out.println("Db shutdown (shutdown hook)");
+				System.out.println("Neo4j shutdown (shutdown hook)");
 			}
 		});
 	}
