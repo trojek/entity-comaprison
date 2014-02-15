@@ -47,9 +47,9 @@ public class ApplicationDomainModel {
 			DBObject object = cursor.next();
 			DBObject object_connections = (DBObject) object.get("connections");
 			System.out.println(object.get("object"));
-			Set<String> x = object_connections.keySet();
-			for (String z : x) {
-				System.out.println("   " + object_connections.get(z));
+			Set<String> connectionsSet = object_connections.keySet();
+			for (String key : connectionsSet) {
+				System.out.println("   " + object_connections.get(key));
 			}
 		}
 	}
@@ -63,9 +63,9 @@ public class ApplicationDomainModel {
 			DBObject object = cursor.next();
 			DBObject object_connections = (DBObject) object.get("connections");
 			System.out.println(object.get("object"));
-			Set<String> x = object_connections.keySet();
-			for (String z : x) {
-				System.out.println("   " + object_connections.get(z));
+			Set<String> connectionsSet = object_connections.keySet();
+			for (String key : connectionsSet) {
+				System.out.println("   " + object_connections.get(key));
 			}
 		}
 	}

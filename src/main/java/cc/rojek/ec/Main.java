@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
+import cc.rojek.ec.algorithm1.JoinOntology;
 import cc.rojek.ec.algorithm2.CompareObject;
 import cc.rojek.ec.application_domain_model.ApplicationDomainModel;
 import cc.rojek.ec.mapdata.Neo4jAndOWL;
@@ -16,15 +17,23 @@ import cc.rojek.ec.mapdata.Neo4jAndOWL;
 public class Main {
 
 	private static final String DB_PATH = "/home/tomasz/Programy/neo4j-community-2.0.0/data/sample.db";
-	private static final String ONTOLOGY_URL = "data/olympic_games.owl";
+	private static final String ONTOLOGY_URL = "data/olympic_games_pure.owl";
+	private static final String NEW_ONTOLOGY_URL = "data/olympic_games_new.owl";
+
 
 	public static void main(String[] args) {
 
-		//OWLOntology ontology = loadOntologyFromFile(ONTOLOGY_URL);
+		OWLOntology ontology = loadOntologyFromFile(ONTOLOGY_URL);
 
-		GraphDatabaseService db = new GraphDatabaseFactory()
-				.newEmbeddedDatabase(DB_PATH);
-		registerShutdownHook(db);
+		try {
+			JoinOntology.createIndividualNode("s");
+		} catch (OWLOntologyCreationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//GraphDatabaseService db = new GraphDatabaseFactory()
+		//		.newEmbeddedDatabase(DB_PATH);
+		//registerShutdownHook(db);
 
 		// Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
 
@@ -34,10 +43,10 @@ public class Main {
 		//WcompareResult.compareObjectsWith();
 		
 		
-		String json = "{'object' : 'object1', 'name' : 'Turin', connections: { 'Location' : 'Italy', 'Season' : 'Summer' } } }";
-		ApplicationDomainModel test = new ApplicationDomainModel("olympic");
+		//String json = "{'object' : 'object1', 'name' : 'Turin', connections: { 'Location' : 'Italy', 'Season' : 'Summer' } } }";
+		//ApplicationDomainModel test = new ApplicationDomainModel("olympic");
 		//test.addData(json, "objects");
-		test.printData("objects");
+		//test.printData("objects");
 	}
 
 	// Method which ensures that the database shut down cleanly
