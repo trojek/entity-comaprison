@@ -34,7 +34,7 @@ public class CompareObject {
 
 		ArrayList<ArrayList<Integer>> listOfCompare = compare(listOfObjectId, listOfGroups);
 		
-		printCompareList(listOfCompare);
+		printCompareList(listOfObjectId, listOfCompare);
 	}
 
 	private static void setAllPaths(ArrayList<Long> ids) {
@@ -137,7 +137,15 @@ public class CompareObject {
 		return counter;
 	}
 
-	private void printCompareList(ArrayList<ArrayList<Integer>> levelList) {
+	private void printCompareList(ArrayList<Long> listOfObjectId, ArrayList<ArrayList<Integer>> levelList) {
+		System.out.println("First row are IDs");
+		for (Long id : listOfObjectId) {
+			System.out.print(id + " ");
+		}
+		
+		System.out.println();
+		System.out.println();
+		
 		for (ArrayList<Integer> level0 : levelList) {
 			for (int level1 : level0) {
 				System.out.print(level1 + " ");
