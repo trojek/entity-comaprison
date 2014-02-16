@@ -1,11 +1,13 @@
 package cc.rojek.ec.application_domain_model;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Set;
 
-import org.json.JSONObject;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import com.mongodb.BasicDBObject;
+//import cc.rojek.ec.algorithm1.JoinOntology;
+
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -54,19 +56,26 @@ public class ApplicationDomainModel {
 		}
 	}
 
-	public void joinObjectNodesWithOntology(String collectionName) {
+	public ArrayList<ObjectModel> getListOfObjectAndConnectedNodes(String collectionName) throws OWLOntologyCreationException {
+		
+		ArrayList<ObjectModel> objectList = new ArrayList<ObjectModel>();
+		
 		DBCollection table = db.getCollection(collectionName);
 
 		DBCursor cursor = table.find();
 
 		while (cursor.hasNext()) {
+			
 			DBObject object = cursor.next();
 			DBObject object_connections = (DBObject) object.get("connections");
-			System.out.println(object.get("object"));
+
 			Set<String> connectionsSet = object_connections.keySet();
+			ObjectModel om = new ObjectModel( (String) object.get("object") );
 			for (String key : connectionsSet) {
-				System.out.println("   " + object_connections.get(key));
+				om.connectionsList.add((String) object_connections.get(key));
 			}
+			objectList.add(om);
 		}
+		return objectList;
 	}
 }

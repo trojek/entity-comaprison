@@ -1,7 +1,7 @@
 package cc.rojek.ec.algorithm1;
 
 import java.io.File;
-import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -15,26 +15,50 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
+import cc.rojek.ec.application_domain_model.ObjectModel;
+
 /**
  * Join OWL file with Neo4j graph database
  */
 public class JoinOntology {
-	private static String ONTOLOGY_URL = "";
-	
-	public JoinOntology(String ONTOLOGY_URL){
-		JoinOntology.ONTOLOGY_URL = ONTOLOGY_URL;
-	}
-	
-	public void createIndividualNodeConnectedToClass(String nodeName,
-			String className) throws OWLOntologyCreationException {
 
+	String ONTOLOGY_URL = " ";
+	static OWLOntologyManager manager;
+	static OWLOntology ontology;
+	static IRI ontologyIRI;
+
+	public JoinOntology(String ONTOLOGY_URL)
+			throws OWLOntologyCreationException {
+		this.ONTOLOGY_URL = ONTOLOGY_URL;
 		File sourceFile = new File(ONTOLOGY_URL);
+		manager = OWLManager.createOWLOntologyManager();
+		ontology = manager.loadOntologyFromOntologyDocument(sourceFile);
+		ontologyIRI = ontology.getOntologyID().getOntologyIRI();
+
+	}
+
+	public void createIndividualNodeConnectedToClass(
+			ArrayList<ObjectModel> listOfObjects)
+			throws OWLOntologyCreationException {
+
 		File targetFile = new File(renameFileUrl(ONTOLOGY_URL));
 
-		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-		OWLOntology ontology = manager
-				.loadOntologyFromOntologyDocument(sourceFile);
-		IRI ontologyIRI = ontology.getOntologyID().getOntologyIRI();
+		for (ObjectModel list : listOfObjects) {
+			for (String joinPoint : list.connectionsList) {
+				setOWLElements(joinPoint, list.nodeName);
+			}
+		}
+
+		try {
+			manager.saveOntology(ontology, IRI.create(targetFile.toURI()));
+		} catch (OWLOntologyStorageException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private static void setOWLElements(String className, String nodeName) {
+
 		OWLDataFactory factory = manager.getOWLDataFactory();
 
 		OWLClass owlClass = factory.getOWLClass(IRI.create(ontologyIRI + "#"
@@ -49,15 +73,11 @@ public class JoinOntology {
 		if (ontology.containsClassInSignature(IRI.create(ontologyIRI + "#"
 				+ className))) {
 			manager.applyChange(addAxiom);
+
 		} else {
-			System.out.println("There is no class " + className + " in the ontology");
-			return;
-		}
-		try {
-			manager.saveOntology(ontology, IRI.create(targetFile.toURI()));
-		} catch (OWLOntologyStorageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("There is no class " + className
+					+ " in the ontology");
+
 		}
 
 	}
