@@ -27,15 +27,15 @@ public class Main {
 		
 		ArrayList<ObjectModel> mainList = adm.getListOfObjectAndConnectedNodes("objects");
 		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
-		jOnto.createIndividualNodeConnectedToClass(mainList);
+		String newOntologyURL = jOnto.moveJoinPointsToOWLFile(mainList);
 		
-		// OWLOntology ontology = OntologyHelper.loadOntologyFromFile(ONTOLOGY_URL);
-		// GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
+		OWLOntology ontology = OntologyHelper.loadOntologyFromFile(newOntologyURL);
+		GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
 
-		// Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
-		// exampleon.importOntology();
+		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
+		exampleon.importOntology();
 		
-		// CompareObject compareResult = new CompareObject(db, 13l);
-		// compareResult.compareObjectsWith();
+		CompareObject compareResult = new CompareObject(db, 17l);
+		compareResult.compareObjectsWith();
 	}
 }

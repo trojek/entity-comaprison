@@ -37,11 +37,9 @@ public class JoinOntology {
 
 	}
 
-	public void createIndividualNodeConnectedToClass(
+	public String moveJoinPointsToOWLFile(
 			ArrayList<ObjectModel> listOfObjects)
 			throws OWLOntologyCreationException {
-
-		File targetFile = new File(renameFileUrl(ONTOLOGY_URL));
 
 		for (ObjectModel list : listOfObjects) {
 			for (String joinPoint : list.connectionsList) {
@@ -49,12 +47,16 @@ public class JoinOntology {
 			}
 		}
 
+		String fileName = renameFileUrl(ONTOLOGY_URL);
+		File targetFile = new File(fileName);
+		
 		try {
 			manager.saveOntology(ontology, IRI.create(targetFile.toURI()));
 		} catch (OWLOntologyStorageException e) {
 			e.printStackTrace();
 		}
 
+		return fileName;
 	}
 
 	private static void setOWLElements(String className, String nodeName) {
