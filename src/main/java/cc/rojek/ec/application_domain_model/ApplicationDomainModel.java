@@ -63,7 +63,7 @@ public class ApplicationDomainModel {
 		DBCollection table = db.getCollection(collectionName);
 
 		DBCursor cursor = table.find();
-
+		
 		while (cursor.hasNext()) {
 			
 			DBObject object = cursor.next();

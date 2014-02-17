@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 import cc.rojek.ec.algorithm1.JoinOntology;
 //import cc.rojek.ec.algorithm1.JoinOntology;
-import cc.rojek.ec.algorithm2.CompareObject;
+import cc.rojek.ec.algorithm2.DataSet;
 import cc.rojek.ec.application_domain_model.ApplicationDomainModel;
 import cc.rojek.ec.application_domain_model.ObjectModel;
 import cc.rojek.ec.helpers.Neo4jHelper;
@@ -35,7 +35,7 @@ public class Main {
 		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
 		exampleon.importOntology();
 		
-		CompareObject compareResult = new CompareObject(db, 17l);
-		compareResult.compareObjectsWith();
+		DataSet compareResult = new DataSet(db);
+		compareResult.compareObjectsWith(30l);
 	}
 }

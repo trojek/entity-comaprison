@@ -19,14 +19,4 @@ public class Pathway {
 	public void add(long l) {
 		path.add(l);
 	}
-	
-	public String toString(){
-		String str ="";
-		for (Long s : path) {
-		    str += "-> " + s;
-		}
-		return str;
-	}
-	
-	
 }

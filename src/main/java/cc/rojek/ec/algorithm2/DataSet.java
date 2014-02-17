@@ -11,20 +11,18 @@ import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
 
-public class CompareObject {
+public class DataSet {
 
 	static ExecutionEngine engine;
 	static GraphDatabaseService db;
-	static ArrayList<Pathway> listOfPathways = new ArrayList<Pathway>();
-	static Long cObjectId;
+	public static ArrayList<Pathway> listOfPathways = new ArrayList<Pathway>();
 
-	public CompareObject(GraphDatabaseService db, Long cObjectId) {
-		CompareObject.db = db;
+	public DataSet(GraphDatabaseService db) {
+		DataSet.db = db;
 		engine = new ExecutionEngine(db);
-		CompareObject.cObjectId = cObjectId;
 	}
 
-	public void compareObjectsWith() {
+	public void compareObjectsWith(Long cObjectId) {
 
 		ArrayList<Long> listOfObjectId = getAllIndividualNodes();
 
@@ -32,7 +30,7 @@ public class CompareObject {
 
 		ArrayList<Long> listOfGroups = getAllUniqeGroup();
 
-		ArrayList<ArrayList<Integer>> listOfCompare = compare(listOfObjectId, listOfGroups);
+		ArrayList<ArrayList<Integer>> listOfCompare = makeCompareList(listOfObjectId, listOfGroups, cObjectId);
 		
 		printCompareList(listOfObjectId, listOfCompare);
 	}
@@ -91,8 +89,8 @@ public class CompareObject {
 		}
 	}
 
-	private static ArrayList<ArrayList<Integer>> compare(
-			ArrayList<Long> listOfObjectId, ArrayList<Long> listOfGroups) {
+	private static ArrayList<ArrayList<Integer>> makeCompareList(
+			ArrayList<Long> listOfObjectId, ArrayList<Long> listOfGroups, Long cObjectId) {
 		ArrayList<ArrayList<Integer>> listOfCompare = new ArrayList<ArrayList<Integer>>();
 		for (Long group : listOfGroups) {
 			ArrayList<Integer> listForGroup = new ArrayList<Integer>();
@@ -106,7 +104,7 @@ public class CompareObject {
 		return listOfCompare;
 	}
 
-	private static ArrayList<Long> getAllUniqeGroup() {
+	static ArrayList<Long> getAllUniqeGroup() {
 		ArrayList<Long> uniqeGroupList = new ArrayList<Long>();
 		for (Pathway path : listOfPathways) {
 			if (!uniqeGroupList.contains(path.groupId)) {

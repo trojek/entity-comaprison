@@ -43,7 +43,7 @@ public class JoinOntology {
 
 		for (ObjectModel list : listOfObjects) {
 			for (String joinPoint : list.connectionsList) {
-				setOWLElements(joinPoint, list.nodeName);
+				setOWLElement(joinPoint, list.nodeName);
 			}
 		}
 
@@ -59,7 +59,7 @@ public class JoinOntology {
 		return fileName;
 	}
 
-	private static void setOWLElements(String className, String nodeName) {
+	private static void setOWLElement(String className, String nodeName) {
 
 		OWLDataFactory factory = manager.getOWLDataFactory();
 
