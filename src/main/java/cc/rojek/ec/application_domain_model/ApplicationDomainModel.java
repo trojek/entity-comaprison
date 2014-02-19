@@ -1,19 +1,18 @@
 package cc.rojek.ec.application_domain_model;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-//import cc.rojek.ec.algorithm1.JoinOntology;
+import cc.rojek.ec.helpers.MongoDBHelper;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
+//import cc.rojek.ec.algorithm1.JoinOntology;
 
 public class ApplicationDomainModel {
 
@@ -21,15 +20,7 @@ public class ApplicationDomainModel {
 
 	public ApplicationDomainModel(String dbName) {
 
-		MongoClient mongoClient = null;
-		try {
-			mongoClient = new MongoClient("localhost", 27017);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-
-		DB db = mongoClient.getDB(dbName);
-		this.db = db;
+		this.db = MongoDBHelper.connectWithDB(dbName);
 	}
 
 	public void addData(String data, String collectionName) {
