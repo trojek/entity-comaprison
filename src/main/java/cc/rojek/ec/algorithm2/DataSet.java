@@ -29,7 +29,7 @@ public class DataSet {
 		setAllPaths(listOfObjectId);
 
 		ArrayList<Long> listOfGroups = getAllUniqeGroup();
-
+		
 		ArrayList<ArrayList<Integer>> listOfCompare = makeCompareList(listOfObjectId, listOfGroups, cObjectId);
 		
 		printCompareList(listOfObjectId, listOfCompare);
@@ -69,11 +69,11 @@ public class DataSet {
 			ExecutionResult result = engine.execute(query);
 
 			Iterator<Path> allPaths_column = result.columnAs("allPaths");
+			int counter = 0;
 			for (Path path : IteratorUtil.asIterable(allPaths_column)) {
 				Pathway pw = new Pathway(individualNode);
 				Iterable<Node> nodeResult = path.nodes();
 				int pl = path.length();
-				int counter = 0;
 				for (Node node : nodeResult) {
 					if (counter == 1) {
 						pw.setGroupId(node.getId());
