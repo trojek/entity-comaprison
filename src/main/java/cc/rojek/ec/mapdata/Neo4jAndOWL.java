@@ -93,7 +93,7 @@ public class Neo4jAndOWL {
 
 		if (superclasses.isEmpty()) {
 			classNode.createRelationshipTo(thingNode,
-					DynamicRelationshipType.withName("subClassOf"));
+					DynamicRelationshipType.withName("SUBCLASS"));
 		} else {
 			for (org.semanticweb.owlapi.reasoner.Node<OWLClass> parentOWLNode : superclasses) {
 
@@ -107,7 +107,7 @@ public class Neo4jAndOWL {
 				Node parentNode = getOrCreateNodeWithUniqueFactory(
 						parentString, db);
 				classNode.createRelationshipTo(parentNode,
-						DynamicRelationshipType.withName("subClassOf"));
+						DynamicRelationshipType.withName("SUBCLASS"));
 			}
 		}
 	}
@@ -125,7 +125,7 @@ public class Neo4jAndOWL {
 			individualNode.addLabel(Labels.Individual);
 
 			individualNode.createRelationshipTo(classNode,
-					DynamicRelationshipType.withName("instanceOf"));
+					DynamicRelationshipType.withName("INSTANCE"));
 
 			// get object property and set them as the relationship
 			setObjectProperty(individualNode, i);
