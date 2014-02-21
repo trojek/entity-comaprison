@@ -69,14 +69,12 @@ public class DataSet {
 			//paths iterate
 			for (Path pathTrace : IteratorUtil.asIterable(allPaths_column)) {
 				int counter = 0;
-				System.out.println("create new path");
 				Pathway pw = new Pathway(individualNode);
 				Iterable<Node> nodeResult = pathTrace.nodes();
 				int pathLength = pathTrace.length();
 				//nodes iterate
 				for (Node node : nodeResult) {
 					if (counter == 1) {
-						System.out.println("comp category: " + node.getId());
 						pw.setGroupId(node.getId());
 					} else if (counter > 1 && counter < pathLength) {
 						pw.add(node.getId());
