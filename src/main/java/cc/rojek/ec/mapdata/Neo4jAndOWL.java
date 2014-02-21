@@ -63,12 +63,12 @@ public class Neo4jAndOWL {
 		}
 	}
 
-	private static Node createRootNode(){
+	private static Node createRootNode() {
 		Node thingNode = getOrCreateNodeWithUniqueFactory("owl:Thing", db);
 		thingNode.addLabel(Labels.Root);
 		return thingNode;
 	}
-	
+
 	private static void getClassesAndIndividualsAndConnectThem(Node thingNode) {
 		for (OWLClass c : ontology.getClassesInSignature(true)) {
 			String classString = c.toString();
@@ -91,7 +91,7 @@ public class Neo4jAndOWL {
 			OWLClass c) {
 		NodeSet<OWLClass> superclasses = reasoner.getSuperClasses(c, true);
 
-		if (superclasses.isEmpty()) {
+		if (superclasses.isEmpty() && !(classNode.equals(thingNode))) {
 			classNode.createRelationshipTo(thingNode,
 					DynamicRelationshipType.withName("SUBCLASS"));
 		} else {
