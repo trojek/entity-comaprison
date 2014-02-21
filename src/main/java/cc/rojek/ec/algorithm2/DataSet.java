@@ -25,19 +25,20 @@ public class DataSet {
 	public void compareObjectsWith(Long cObjectId) {
 
 		ArrayList<Long> listOfObjectId = getAllIndividualNodes();
-		
+
 		setAllPaths(listOfObjectId);
 
 		ArrayList<Long> listOfGroups = getAllUniqeGroup();
-		
-		ArrayList<ArrayList<Integer>> listOfCompare = makeCompareList(listOfObjectId, listOfGroups, cObjectId);
-		
+
+		ArrayList<ArrayList<Integer>> listOfCompare = makeCompareList(
+				listOfObjectId, listOfGroups, cObjectId);
+
 		printCompareList(listOfObjectId, listOfCompare);
 	}
 
 	private static void setAllPaths(ArrayList<Long> ids) {
 		for (Long objId : ids) {
-			getAllPathBetweenRootNodeAndIndividualNode(objId);
+			setAllPathBetweenRootNodeAndIndividualNode(objId);
 		}
 	}
 
@@ -58,37 +59,45 @@ public class DataSet {
 		return objectIds;
 	}
 
-	private static void getAllPathBetweenRootNodeAndIndividualNode(
+	private static void setAllPathBetweenRootNodeAndIndividualNode(
 			long individualNode) {
 		try (Transaction getAllPath = db.beginTx()) {
 			String query = "START indv=node("
 					+ individualNode
 					+ "), root=node(0) MATCH allPaths=root<-[*]-indv RETURN allPaths";
 			ExecutionResult result = engine.execute(query);
+
 			Iterator<Path> allPaths_column = result.columnAs("allPaths");
-			//paths iterate
-			for (Path pathTrace : IteratorUtil.asIterable(allPaths_column)) {
-				int counter = 0;
-				Pathway pw = new Pathway(individualNode);
-				Iterable<Node> nodeResult = pathTrace.nodes();
-				int pathLength = pathTrace.length();
-				//nodes iterate
-				for (Node node : nodeResult) {
-					if (counter == 1) {
-						pw.setGroupId(node.getId());
-					} else if (counter > 1 && counter < pathLength) {
-						pw.add(node.getId());
-					}
-					counter++;
-				}
-				listOfPathways.add(pw);
-			}
+
+			iterateThroughPaths(allPaths_column, individualNode);
+
 			getAllPath.success();
 		}
 	}
 
+	private static void iterateThroughPaths(Iterator<Path> allPaths_column,
+			long individualNode) {
+		for (Path pathTrace : IteratorUtil.asIterable(allPaths_column)) {
+			int counter = 0;
+			Pathway pw = new Pathway(individualNode);
+			Iterable<Node> nodeResult = pathTrace.nodes();
+			int pathLength = pathTrace.length();
+			// nodes iterate
+			for (Node node : nodeResult) {
+				if (counter == 1) {
+					pw.setGroupId(node.getId());
+				} else if (counter > 1 && counter < pathLength) {
+					pw.add(node.getId());
+				}
+				counter++;
+			}
+			listOfPathways.add(pw);
+		}
+	}
+
 	private static ArrayList<ArrayList<Integer>> makeCompareList(
-			ArrayList<Long> listOfObjectId, ArrayList<Long> listOfGroups, Long cObjectId) {
+			ArrayList<Long> listOfObjectId, ArrayList<Long> listOfGroups,
+			Long cObjectId) {
 		ArrayList<ArrayList<Integer>> listOfCompare = new ArrayList<ArrayList<Integer>>();
 		for (Long group : listOfGroups) {
 			ArrayList<Integer> listForGroup = new ArrayList<Integer>();
@@ -133,15 +142,16 @@ public class DataSet {
 		return counter;
 	}
 
-	private void printCompareList(ArrayList<Long> listOfObjectId, ArrayList<ArrayList<Integer>> levelList) {
+	private void printCompareList(ArrayList<Long> listOfObjectId,
+			ArrayList<ArrayList<Integer>> levelList) {
 		System.out.println("First row are IDs");
 		for (Long id : listOfObjectId) {
 			System.out.print(id + " ");
 		}
-		
+
 		System.out.println();
 		System.out.println();
-		
+
 		for (ArrayList<Integer> level0 : levelList) {
 			for (int level1 : level0) {
 				System.out.print(level1 + " ");

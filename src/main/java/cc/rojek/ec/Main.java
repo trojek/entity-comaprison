@@ -6,13 +6,13 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import cc.rojek.ec.algorithm1.JoinOntology;
-//import cc.rojek.ec.algorithm1.JoinOntology;
 import cc.rojek.ec.algorithm2.DataSet;
 import cc.rojek.ec.application_domain_model.ApplicationDomainModel;
 import cc.rojek.ec.application_domain_model.ObjectModel;
 import cc.rojek.ec.helpers.Neo4jHelper;
 import cc.rojek.ec.helpers.OntologyHelper;
 import cc.rojek.ec.mapdata.Neo4jAndOWL;
+//import cc.rojek.ec.algorithm1.JoinOntology;
 
 public class Main {
 
