@@ -25,7 +25,7 @@ public class DataSet {
 	public void compareObjectsWith(Long cObjectId) {
 
 		ArrayList<Long> listOfObjectId = getAllIndividualNodes();
-
+		
 		setAllPaths(listOfObjectId);
 
 		ArrayList<Long> listOfGroups = getAllUniqeGroup();
@@ -60,30 +60,30 @@ public class DataSet {
 
 	private static void getAllPathBetweenRootNodeAndIndividualNode(
 			long individualNode) {
-
 		try (Transaction getAllPath = db.beginTx()) {
-
 			String query = "START indv=node("
 					+ individualNode
 					+ "), root=node(0) MATCH allPaths=root<-[*]-indv RETURN allPaths";
 			ExecutionResult result = engine.execute(query);
-
 			Iterator<Path> allPaths_column = result.columnAs("allPaths");
-			int counter = 0;
-			for (Path path : IteratorUtil.asIterable(allPaths_column)) {
+			//paths iterate
+			for (Path pathTrace : IteratorUtil.asIterable(allPaths_column)) {
+				int counter = 0;
+				System.out.println("create new path");
 				Pathway pw = new Pathway(individualNode);
-				Iterable<Node> nodeResult = path.nodes();
-				int pl = path.length();
+				Iterable<Node> nodeResult = pathTrace.nodes();
+				int pathLength = pathTrace.length();
+				//nodes iterate
 				for (Node node : nodeResult) {
 					if (counter == 1) {
+						System.out.println("comp category: " + node.getId());
 						pw.setGroupId(node.getId());
-					} else if (counter > 1 && counter < pl) {
+					} else if (counter > 1 && counter < pathLength) {
 						pw.add(node.getId());
 					}
 					counter++;
 				}
 				listOfPathways.add(pw);
-
 			}
 			getAllPath.success();
 		}
