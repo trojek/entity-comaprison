@@ -26,19 +26,9 @@ public class Main {
 
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringMongoConfig.xml");
 		MongoOperations mongoOperation = (MongoOperations)ctx.getBean("olympicID");
-		
-		ArrayList<String> connectionsList = new ArrayList<String>();
-		connectionsList.add("test1");
-		connectionsList.add("test3");
-		connectionsList.add("test2");
-		
-		Object object = new Object("Turin", connectionsList);
-		
-		mongoOperation.save(object);
-		
-//		//String json = "{'object' : 'object1', 'name' : 'Turin', connections: { 'Location' : 'Italy', 'Season' : 'Summer' } } }";
-//		ApplicationDomainModel adm = new ApplicationDomainModel("olympic");
-//		//adm.addData(json, "objects");
+				
+		ApplicationDomainModel adm = new ApplicationDomainModel(mongoOperation);
+		adm.printData();
 //		
 //		ArrayList<ObjectModel> mainList = adm.getListOfObjectAndConnectedNodes("objects");
 //		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
