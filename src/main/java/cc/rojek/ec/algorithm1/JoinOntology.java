@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import cc.rojek.ec.application_domain_model.ObjectModel;
+import cc.rojek.ec.application_domain_model.Object;
 
 /**
  * Join OWL file with Neo4j graph database
@@ -38,12 +38,12 @@ public class JoinOntology {
 	}
 
 	public String moveJoinPointsToOWLFile(
-			ArrayList<ObjectModel> listOfObjects)
+			ArrayList<Object> listOfObjects)
 			throws OWLOntologyCreationException {
 
-		for (ObjectModel list : listOfObjects) {
-			for (String joinPoint : list.connectionsList) {
-				setOWLElement(joinPoint, list.nodeName);
+		for (Object list : listOfObjects) {
+			for (String joinPoint : list.getConnectionsList()) {
+				setOWLElement(joinPoint, list.getNodeName());
 			}
 		}
 

@@ -47,9 +47,9 @@ public class ApplicationDomainModel {
 		}
 	}
 
-	public ArrayList<ObjectModel> getListOfObjectAndConnectedNodes(String collectionName) throws OWLOntologyCreationException {
+	public ArrayList<Object> getListOfObjectAndConnectedNodes(String collectionName) throws OWLOntologyCreationException {
 		
-		ArrayList<ObjectModel> objectList = new ArrayList<ObjectModel>();
+		ArrayList<Object> objectList = new ArrayList<Object>();
 		
 		DBCollection table = db.getCollection(collectionName);
 
@@ -61,9 +61,9 @@ public class ApplicationDomainModel {
 			DBObject object_connections = (DBObject) object.get("connections");
 
 			Set<String> connectionsSet = object_connections.keySet();
-			ObjectModel om = new ObjectModel( (String) object.get("object") );
+			Object om = new Object( (String) object.get("object") );
 			for (String key : connectionsSet) {
-				om.connectionsList.add((String) object_connections.get(key));
+				om.getConnectionsList().add((String) object_connections.get(key));
 			}
 			objectList.add(om);
 		}
