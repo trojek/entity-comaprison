@@ -1,7 +1,7 @@
 package cc.rojek.ec.algorithm1;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -38,12 +38,12 @@ public class JoinOntology {
 	}
 
 	public String moveJoinPointsToOWLFile(
-			ArrayList<Object> listOfObjects)
+			List<Object> mainList)
 			throws OWLOntologyCreationException {
 
-		for (Object list : listOfObjects) {
+		for (Object list : mainList) {
 			for (String joinPoint : list.getConnectionsList()) {
-				setOWLElement(joinPoint, list.getNodeName());
+				setOWLElement(joinPoint, list.getId());
 			}
 		}
 
@@ -79,7 +79,6 @@ public class JoinOntology {
 		} else {
 			System.out.println("There is no class " + className
 					+ " in the ontology");
-
 		}
 
 	}

@@ -18,6 +18,10 @@ public class Object {
 		this.nodeName = nodeName;
 		this.connectionsList = connectionsList;
 	}
+	
+	public String getId(){
+		return id;
+	}
 
 	public String getNodeName() {
 		return nodeName;

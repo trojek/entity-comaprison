@@ -1,6 +1,6 @@
 package cc.rojek.ec;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -28,19 +28,19 @@ public class Main {
 		MongoOperations mongoOperation = (MongoOperations)ctx.getBean("olympicID");
 				
 		ApplicationDomainModel adm = new ApplicationDomainModel(mongoOperation);
-		adm.printData();
-//		
-//		ArrayList<ObjectModel> mainList = adm.getListOfObjectAndConnectedNodes("objects");
-//		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
-//		String newOntologyURL = jOnto.moveJoinPointsToOWLFile(mainList);
-//		
-//		OWLOntology ontology = OntologyHelper.loadOntologyFromFile(newOntologyURL);
-//		GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
-//
-//		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
-//		exampleon.importOntology();
-//		
-//		DataSet compareResult = new DataSet(db);
-//		compareResult.compareObjectsWith(30l);
+		// adm.printData();
+		
+		List<Object> mainList = adm.getListOfObjectAndConnectedNodes();
+		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
+		String newOntologyURL = jOnto.moveJoinPointsToOWLFile(mainList);
+		
+		OWLOntology ontology = OntologyHelper.loadOntologyFromFile(newOntologyURL);
+		GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
+
+		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
+		exampleon.importOntology();
+		
+		DataSet compareResult = new DataSet(db);
+		compareResult.compareObjectsWith(16l);
 	}
 }
