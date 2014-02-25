@@ -72,9 +72,9 @@ public class Neo4jAndOWL {
 	private static void getClassesAndIndividualsAndConnectThem(Node thingNode) {
 		for (OWLClass c : ontology.getClassesInSignature(true)) {
 			String classString = c.toString();
-			if (classString.contains("#")) {
-				classString = getReadableName(classString);
-			}
+			
+			classString = extractNameIfPossible(classString);
+			
 			Node classNode = getOrCreateNodeWithUniqueFactory(classString, db);
 			classNode.addLabel(Labels.Class);
 
@@ -100,10 +100,9 @@ public class Neo4jAndOWL {
 				OWLClassExpression parent = parentOWLNode
 						.getRepresentativeElement();
 				String parentString = parent.toString();
+				
+				parentString = extractNameIfPossible(parentString);
 
-				if (parentString.contains("#")) {
-					parentString = getReadableName(parentString);
-				}
 				Node parentNode = getOrCreateNodeWithUniqueFactory(
 						parentString, db);
 				classNode.createRelationshipTo(parentNode,
@@ -117,9 +116,9 @@ public class Neo4jAndOWL {
 				.getInstances(c, true)) {
 			OWLNamedIndividual i = in.getRepresentativeElement();
 			String indString = i.toString();
-			if (indString.contains("#")) {
-				indString = getReadableName(indString);
-			}
+			
+			indString = extractNameIfPossible(indString);
+
 			Node individualNode = getOrCreateNodeWithUniqueFactory(indString,
 					db);
 			individualNode.addLabel(Labels.Individual);
@@ -185,8 +184,15 @@ public class Neo4jAndOWL {
 		return factory.getOrCreate("name", nodeName);
 	}
 
+	private static String extractNameIfPossible(String name){
+		if (name.contains("#")) {
+			name = getReadableName(name);
+		} 
+		return name;
+	}
+	
 	// extract human readable part of string
-	public static String getReadableName(String fullName) {
+	static String getReadableName(String fullName) {
 		return fullName.substring(fullName.indexOf("#") + 1,
 				fullName.lastIndexOf(">"));
 	}
