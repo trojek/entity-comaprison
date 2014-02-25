@@ -18,6 +18,8 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Map OWL file to Neo4j graph database
@@ -27,7 +29,9 @@ public class Neo4jAndOWL {
 	static GraphDatabaseService db;
 	static OWLOntology ontology;
 	static OWLReasoner reasoner;
-
+	
+	private final static Logger logger = LoggerFactory.getLogger(Neo4jAndOWL.class);
+	
 	public Neo4jAndOWL(GraphDatabaseService db, OWLOntology ontology) {
 		Neo4jAndOWL.db = db;
 		Neo4jAndOWL.ontology = ontology;
@@ -49,7 +53,7 @@ public class Neo4jAndOWL {
 
 	private static void moveData() {
 		try (Transaction tx = db.beginTx()) {
-			System.out.println("Transaction begin.");
+			logger.info("Transaction begin: move data from owl into neo4j db: " + db.toString());
 
 			// Create root node of the graph
 			Node thingNode = createRootNode();
@@ -58,8 +62,7 @@ public class Neo4jAndOWL {
 			getClassesAndIndividualsAndConnectThem(thingNode);
 
 			tx.success();
-			System.out.println("Transaction finished.");
-
+			logger.info("Transaction finished: move data from owl into neo4j db: " + db.toString());
 		}
 	}
 
