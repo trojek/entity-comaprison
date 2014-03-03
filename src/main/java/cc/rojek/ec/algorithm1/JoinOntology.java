@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import cc.rojek.ec.application_domain_model.Object;
+import cc.rojek.ec.mongodb_domain_model.Object;
 
 /**
  * Join OWL file with Neo4j graph database

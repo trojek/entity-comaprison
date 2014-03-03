@@ -1,4 +1,4 @@
-package cc.rojek.ec.application_domain_model;
+package cc.rojek.ec.mongodb_domain_model;
 
 import java.util.ArrayList;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 
-//import cc.rojek.ec.algorithm1.JoinOntology;
+import cc.rojek.ec.mongodb_domain_model.Object;
 
 public class ApplicationDomainModel {
 
