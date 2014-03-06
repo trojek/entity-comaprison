@@ -10,11 +10,11 @@ import org.springframework.data.mongodb.core.MongoOperations;
 
 import cc.rojek.ec.algorithm1.JoinOntology;
 import cc.rojek.ec.algorithm2.DataSet;
-import cc.rojek.ec.application_domain_model.ApplicationDomainModel;
 import cc.rojek.ec.helpers.Neo4jHelper;
 import cc.rojek.ec.helpers.OntologyHelper;
 import cc.rojek.ec.mapdata.Neo4jAndOWL;
 import cc.rojek.ec.mongodb_domain_model.Object;
+import cc.rojek.ec.mongodb_domain_model.ObjectOperations;
 
 public class Main {
 
@@ -26,10 +26,9 @@ public class Main {
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringMongoConfig.xml");
 		MongoOperations mongoOperation = (MongoOperations)ctx.getBean("olympicID");
 				
-		ApplicationDomainModel adm = new ApplicationDomainModel(mongoOperation);
-		// adm.printData();
+		ObjectOperations oo = new ObjectOperations(mongoOperation);
 		
-		List<Object> mainList = adm.getListOfObjectAndConnectedNodes();
+		List<Object> mainList = oo.getListOfObjectAndConnectedNodes();
 		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
 		String newOntologyURL = jOnto.moveJoinPointsToOWLFile(mainList);
 		
