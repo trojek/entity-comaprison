@@ -18,27 +18,28 @@ import cc.rojek.ec.mongodb_domain_model.ObjectOperations;
 
 public class Main {
 
-	private static final String DB_PATH = "/home/tomasz/Programy/neo4j-community-2.0.0/data/sample.db";
-	private static final String ONTOLOGY_URL = "data/olympic_games_pure.owl";
+    private static final String DB_PATH = "/home/tomasz/Programy/neo4j-community-2.0.0/data/sample.db";
+    private static final String ONTOLOGY_URL = "data/olympic_games_pure.owl";
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-		ApplicationContext ctx = new GenericXmlApplicationContext("SpringMongoConfig.xml");
-		MongoOperations mongoOperation = (MongoOperations)ctx.getBean("olympicID");
-				
-		ObjectOperations oo = new ObjectOperations(mongoOperation);
-		
-		List<Object> mainList = oo.getListOfObjectAndConnectedNodes();
-		JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
-		String newOntologyURL = jOnto.moveJoinPointsToOWLFile(mainList);
-		
-		OWLOntology ontology = OntologyHelper.loadOntologyFromFile(newOntologyURL);
-		GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
+        ApplicationContext ctx = new GenericXmlApplicationContext("SpringMongoConfig.xml");
+        MongoOperations mongoOperation = (MongoOperations) ctx.getBean("olympicID");
 
-		Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
-		exampleon.importOntology();
-		
-		DataSet compareResult = new DataSet(db);
-		compareResult.compareObjectsWith(16l);
-	}
+        ObjectOperations oo = new ObjectOperations(mongoOperation);
+
+        List<Object> mainList = oo.getListOfObjectAndConnectedNodes();
+
+        JoinOntology jOnto = new JoinOntology(ONTOLOGY_URL);
+        String newOntologyURL = jOnto.moveJoinPointsToOWLFile(mainList);
+
+        OWLOntology ontology = OntologyHelper.loadOntologyFromFile(newOntologyURL);
+        GraphDatabaseService db = Neo4jHelper.startNeo4jDB(DB_PATH);
+
+        Neo4jAndOWL exampleon = new Neo4jAndOWL(db, ontology);
+        exampleon.importOntology();
+
+        DataSet compareResult = new DataSet(db);
+        compareResult.compareObjectsWith(16l);
+    }
 }
