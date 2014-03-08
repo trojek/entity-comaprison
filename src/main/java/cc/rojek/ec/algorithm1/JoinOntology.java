@@ -1,6 +1,7 @@
 package cc.rojek.ec.algorithm1;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -22,70 +23,63 @@ import cc.rojek.ec.mongodb_domain_model.Object;
  */
 public class JoinOntology {
 
-	String ONTOLOGY_URL = " ";
-	static OWLOntologyManager manager;
-	static OWLOntology ontology;
-	static IRI ontologyIRI;
+    String ONTOLOGY_URL = " ";
+    static OWLOntologyManager manager;
+    static OWLOntology ontology;
+    static IRI ontologyIRI;
 
-	public JoinOntology(String ONTOLOGY_URL)
-			throws OWLOntologyCreationException {
-		this.ONTOLOGY_URL = ONTOLOGY_URL;
-		File sourceFile = new File(ONTOLOGY_URL);
-		manager = OWLManager.createOWLOntologyManager();
-		ontology = manager.loadOntologyFromOntologyDocument(sourceFile);
-		ontologyIRI = ontology.getOntologyID().getOntologyIRI();
+    public JoinOntology(String ONTOLOGY_URL) throws OWLOntologyCreationException {
+        this.ONTOLOGY_URL = ONTOLOGY_URL;
+        File sourceFile = new File(ONTOLOGY_URL);
+        manager = OWLManager.createOWLOntologyManager();
+        ontology = manager.loadOntologyFromOntologyDocument(sourceFile);
+        ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 
-	}
+    }
 
-	public String moveJoinPointsToOWLFile(
-			List<Object> mainList)
-			throws OWLOntologyCreationException {
+    public String moveJoinPointsToOWLFile(List<Object> mainList)
+            throws OWLOntologyCreationException {
 
-		for (Object list : mainList) {
-			for (String joinPoint : list.getConnectionsList()) {
-				setOWLElement(joinPoint, list.getId());
-			}
-		}
+        for (Object list : mainList) {
+            for (ArrayList<String> joinPoint : list.getInformation()) {
+                setOWLElement(joinPoint.get(0), list.getId());
+            }
+        }
 
-		String fileName = renameFileUrl(ONTOLOGY_URL);
-		File targetFile = new File(fileName);
-		
-		try {
-			manager.saveOntology(ontology, IRI.create(targetFile.toURI()));
-		} catch (OWLOntologyStorageException e) {
-			e.printStackTrace();
-		}
+        String fileName = renameFileUrl(ONTOLOGY_URL);
+        File targetFile = new File(fileName);
 
-		return fileName;
-	}
+        try {
+            manager.saveOntology(ontology, IRI.create(targetFile.toURI()));
+        } catch (OWLOntologyStorageException e) {
+            e.printStackTrace();
+        }
 
-	private static void setOWLElement(String className, String nodeName) {
+        return fileName;
+    }
 
-		OWLDataFactory factory = manager.getOWLDataFactory();
+    private static void setOWLElement(String className, String nodeName) {
 
-		OWLClass owlClass = factory.getOWLClass(IRI.create(ontologyIRI + "#"
-				+ className));
-		OWLNamedIndividual owlIndividual = factory.getOWLNamedIndividual(IRI
-				.create(ontologyIRI + "#" + nodeName));
+        OWLDataFactory factory = manager.getOWLDataFactory();
 
-		OWLAxiom axiom = factory.getOWLClassAssertionAxiom(owlClass,
-				owlIndividual);
-		AddAxiom addAxiom = new AddAxiom(ontology, axiom);
+        OWLClass owlClass = factory.getOWLClass(IRI.create(ontologyIRI + "#" + className));
+        OWLNamedIndividual owlIndividual = factory.getOWLNamedIndividual(IRI.create(ontologyIRI
+                + "#" + nodeName));
 
-		if (ontology.containsClassInSignature(IRI.create(ontologyIRI + "#"
-				+ className))) {
-			manager.applyChange(addAxiom);
+        OWLAxiom axiom = factory.getOWLClassAssertionAxiom(owlClass, owlIndividual);
+        AddAxiom addAxiom = new AddAxiom(ontology, axiom);
 
-		} else {
-			System.out.println("There is no class " + className
-					+ " in the ontology");
-		}
+        if (ontology.containsClassInSignature(IRI.create(ontologyIRI + "#" + className))) {
+            manager.applyChange(addAxiom);
 
-	}
+        } else {
+            System.out.println("There is no class " + className + " in the ontology");
+        }
 
-	private static String renameFileUrl(String fileUrl) {
-		fileUrl = fileUrl.replace(".owl", "_" + System.currentTimeMillis()
-				+ ".owl");
-		return fileUrl;
-	}
+    }
+
+    private static String renameFileUrl(String fileUrl) {
+        fileUrl = fileUrl.replace(".owl", "_" + System.currentTimeMillis() + ".owl");
+        return fileUrl;
+    }
 }
