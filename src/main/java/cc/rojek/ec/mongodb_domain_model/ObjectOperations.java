@@ -7,30 +7,16 @@ import org.springframework.data.mongodb.core.query.Query;
 
 public class ObjectOperations {
 
-	MongoOperations mongoOperation;
-	
-	public ObjectOperations(MongoOperations mongoOperation) {
-		this.mongoOperation = mongoOperation;
-	}
+    MongoOperations mongoOperation;
 
-	public void printData() {
-		Query query = new Query();
+    public ObjectOperations(MongoOperations mongoOperation) {
+        this.mongoOperation = mongoOperation;
+    }
 
-		List<Object> objectList = mongoOperation.find(query, Object.class);
+    public List<Object> getListOfObjectAndConnectedNodes() {
+        Query query = new Query();
+        List<Object> objectList = mongoOperation.find(query, Object.class);
+        return objectList;
+    }
 
-		for (Object object : objectList) {
-			System.out.println("obj: " + object.getNodeName());
-			for (String connection : object.getConnectionsList()) {
-				System.out.print(" " + connection);
-			}
-			System.out.println();
-		}
-	}
-
-	public List<Object> getListOfObjectAndConnectedNodes() {
-		Query query = new Query();
-		List<Object> objectList = mongoOperation.find(query, Object.class);
-		return objectList;
-	}
-	
 }

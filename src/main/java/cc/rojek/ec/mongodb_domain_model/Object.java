@@ -8,34 +8,34 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "objects")
 public class Object {
 
-	@Id
+    @Id
     private String id;
-	
-	private String nodeName = "";
-	private ArrayList<String> connectionsList = new ArrayList<String>();
 
-	public Object(String nodeName, ArrayList<String> connectionsList) {
-		this.nodeName = nodeName;
-		this.connectionsList = connectionsList;
-	}
-	
-	public String getId(){
-		return id;
-	}
+    private String nodeName = "";
+    private ArrayList<ArrayList<String>> information = new ArrayList<ArrayList<String>>();
 
-	public String getNodeName() {
-		return nodeName;
-	}
+    public Object(String nodeName) {
+        this.nodeName = nodeName;
+    }
 
-	public void setNodeName(String nodeName) {
-		this.nodeName = nodeName;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public ArrayList<String> getConnectionsList() {
-		return connectionsList;
-	}
+    public String getNodeName() {
+        return nodeName;
+    }
 
-	public void setConnectionsList(ArrayList<String> connectionsList) {
-		this.connectionsList = connectionsList;
-	}
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public ArrayList<ArrayList<String>> getInformation() {
+        return information;
+    }
+
+    public void setInformation(ArrayList<ArrayList<String>> information) {
+        this.information = information;
+    }
+
 }
