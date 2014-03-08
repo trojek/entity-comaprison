@@ -1,6 +1,7 @@
 package cc.rojek.ec.algorithm2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -10,153 +11,170 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cc.rojek.ec.application_domain_model.ApplicationDomainModel;
 
 public class DataSet {
 
-	static ExecutionEngine engine;
-	static GraphDatabaseService db;
-	public static ArrayList<Pathway> listOfPathways = new ArrayList<Pathway>();
+    static ExecutionEngine engine;
+    static GraphDatabaseService db;
+    public static ArrayList<Pathway> listOfPathways = new ArrayList<Pathway>();
 
-	public DataSet(GraphDatabaseService db) {
-		DataSet.db = db;
-		engine = new ExecutionEngine(db);
-	}
+    private final static Logger logger = LoggerFactory.getLogger(DataSet.class);
 
-	public void compareObjectsWith(Long cObjectId) {
+    public DataSet(GraphDatabaseService db) {
+        DataSet.db = db;
+        engine = new ExecutionEngine(db);
+    }
 
-		ArrayList<Long> listOfObjectId = getAllIndividualNodes();
+    public void compareObjectsWith(Long cObjectId) {
 
-		setAllPaths(listOfObjectId);
+        ArrayList<Long> listOfObjectId = getAllIndividualNodes();
 
-		ArrayList<Long> listOfGroups = getAllUniqeGroup();
+        ApplicationDomainModel adm = new ApplicationDomainModel();
+        adm.comparisonCriteria.add(2l); // Season
+        adm.comparisonCriteria.add(19l); // Location / pizzaTopping
 
-		ArrayList<ArrayList<Integer>> listOfCompare = makeCompareList(
-				listOfObjectId, listOfGroups, cObjectId);
+        ArrayList<Long> listOfGroups = adm.comparisonCriteria;
 
-		printCompareList(listOfObjectId, listOfCompare);
-	}
+        setAllPaths(listOfObjectId, listOfGroups);
 
-	private static void setAllPaths(ArrayList<Long> ids) {
-		for (Long objId : ids) {
-			setAllPathBetweenRootNodeAndIndividualNode(objId);
-		}
-	}
+        ArrayList<ArrayList<Integer>> listOfCompare = makeCompareList(listOfObjectId, listOfGroups,
+                cObjectId);
 
-	private static ArrayList<Long> getAllIndividualNodes() {
-		ArrayList<Long> objectIds = new ArrayList<Long>();
+        printCompareList(listOfObjectId, listOfCompare);
+    }
 
-		try (Transaction takeNodesID = db.beginTx()) {
-			String query = "MATCH (individuals:Individual) RETURN individuals";
+    private static void setAllPaths(ArrayList<Long> ids, ArrayList<Long> groups) {
+        for (Long objId : ids) {
+            for (Long groupId : groups) {
+                setAllPathBetweenGroupNodeAndIndividualNode(objId, groupId);
+            }
+        }
+    }
 
-			ExecutionResult id = engine.execute(query);
+    private static ArrayList<Long> getAllIndividualNodes() {
+        ArrayList<Long> objectIds = new ArrayList<Long>();
 
-			Iterator<Node> n_column = id.columnAs("individuals");
-			for (Node node : IteratorUtil.asIterable(n_column)) {
-				objectIds.add(node.getId());
-			}
-			takeNodesID.success();
-		}
-		return objectIds;
-	}
+        try (Transaction takeNodesID = db.beginTx()) {
+            String query = "MATCH (individuals:Individual) RETURN individuals";
 
-	private static void setAllPathBetweenRootNodeAndIndividualNode(
-			long individualNode) {
-		try (Transaction getAllPath = db.beginTx()) {
-			String query = "START indv=node("
-					+ individualNode
-					+ "), root=node(0) MATCH allPaths=root<-[*]-indv RETURN allPaths";
-			ExecutionResult result = engine.execute(query);
+            ExecutionResult id = engine.execute(query);
 
-			Iterator<Path> allPaths_column = result.columnAs("allPaths");
+            Iterator<Node> n_column = id.columnAs("individuals");
+            for (Node node : IteratorUtil.asIterable(n_column)) {
+                objectIds.add(node.getId());
+            }
+            takeNodesID.success();
+        }
+        return objectIds;
+    }
 
-			iterateThroughPaths(allPaths_column, individualNode);
+    private static void setAllPathBetweenGroupNodeAndIndividualNode(long individualNode,
+            long groupNode) {
+        try (Transaction getAllPath = db.beginTx()) {
+            String query = "START indv=node(" + individualNode + "), root=node(" + groupNode
+                    + ") MATCH allPaths=root<-[*]-indv RETURN allPaths";
+            ExecutionResult result = engine.execute(query);
 
-			getAllPath.success();
-		}
-	}
+            Iterator<Path> allPaths_column = result.columnAs("allPaths");
 
-	private static void iterateThroughPaths(Iterator<Path> allPaths_column,
-			long individualNode) {
-		for (Path pathTrace : IteratorUtil.asIterable(allPaths_column)) {
-			int counter = 0;
-			Pathway pw = new Pathway(individualNode);
-			Iterable<Node> nodeResult = pathTrace.nodes();
-			int pathLength = pathTrace.length();
-			// nodes iterate
-			for (Node node : nodeResult) {
-				if (counter == 1) {
-					pw.setGroupId(node.getId());
-				} else if (counter > 1 && counter < pathLength) {
-					pw.add(node.getId());
-				}
-				counter++;
-			}
-			listOfPathways.add(pw);
-		}
-	}
+            iterateThroughPaths(allPaths_column, individualNode);
 
-	private static ArrayList<ArrayList<Integer>> makeCompareList(
-			ArrayList<Long> listOfObjectId, ArrayList<Long> listOfGroups,
-			Long cObjectId) {
-		ArrayList<ArrayList<Integer>> listOfCompare = new ArrayList<ArrayList<Integer>>();
-		for (Long group : listOfGroups) {
-			ArrayList<Integer> listForGroup = new ArrayList<Integer>();
-			Pathway base = findPathwayWhere(cObjectId, group);
-			for (Long objectId : listOfObjectId) {
-				listForGroup.add(countPoints(base,
-						findPathwayWhere(objectId, group)));
-			}
-			listOfCompare.add(listForGroup);
-		}
-		return listOfCompare;
-	}
+            getAllPath.success();
+        }
+    }
 
-	static ArrayList<Long> getAllUniqeGroup() {
-		ArrayList<Long> uniqeGroupList = new ArrayList<Long>();
-		for (Pathway path : listOfPathways) {
-			if (!uniqeGroupList.contains(path.groupId)) {
-				uniqeGroupList.add(path.groupId);
-			}
-		}
-		return uniqeGroupList;
-	}
+    private static void iterateThroughPaths(Iterator<Path> allPaths_column, long individualNode) {
+        for (Path pathTrace : IteratorUtil.asIterable(allPaths_column)) {
+            int counter = 0;
+            Pathway pw = new Pathway(individualNode);
+            Iterable<Node> nodeResult = pathTrace.nodes();
+            int pathLength = pathTrace.length();
+            // nodes iterate
+            for (Node node : nodeResult) {
+                if (counter == 0) {
+                    pw.setGroupId(node.getId());
+                } else if (counter > 0 && counter < pathLength) {
+                    pw.add(node.getId());
+                }
+                counter++;
+            }
+            listOfPathways.add(pw);
+        }
+    }
 
-	private static Pathway findPathwayWhere(long objectId, long groupId) {
-		Pathway pathway = null;
-		for (Pathway pw : listOfPathways) {
-			if (pw.groupId == groupId && pw.individualId == objectId) {
-				pathway = pw;
-				break;
-			}
-		}
-		return pathway;
-	}
+    private static ArrayList<ArrayList<Integer>> makeCompareList(ArrayList<Long> listOfObjectId,
+            ArrayList<Long> listOfGroups, Long cObjectId) {
+        ArrayList<ArrayList<Integer>> listOfCompare = new ArrayList<ArrayList<Integer>>();
+        for (Long group : listOfGroups) {
 
-	private static int countPoints(Pathway base, Pathway extra) {
-		int counter = 0;
-		for (int i = 0; i < base.path.size(); i++) {
-			if (base.path.get(i) == extra.path.get(i)) {
-				counter++;
-			}
-		}
-		return counter;
-	}
+            ArrayList<Integer> listForGroup = new ArrayList<Integer>();
+            ArrayList<Pathway> basePaths = findPathwaysListWhere(cObjectId, group);
 
-	private void printCompareList(ArrayList<Long> listOfObjectId,
-			ArrayList<ArrayList<Integer>> levelList) {
-		System.out.println("First row are IDs");
-		for (Long id : listOfObjectId) {
-			System.out.print(id + " ");
-		}
+            for (Long objectId : listOfObjectId) {
+                ArrayList<Pathway> extraPaths = findPathwaysListWhere(objectId, group);
+                int sum = 0;
+                for (Pathway extraPath : extraPaths) {
+                    ArrayList<Integer> sums = new ArrayList<Integer>();
+                    for (Pathway basePath : basePaths) {
+                        // System.out.print("s: "+ countPoints(basePath,
+                        // extraPath) + " ");
+                        sums.add(countPoints(basePath, extraPath));
+                    }
+                    sum += Collections.max(sums);
+                    System.out.println("");
+                }
+                System.out.println("");
+                listForGroup.add(sum);
+            }
+            listOfCompare.add(listForGroup);
+        }
+        return listOfCompare;
+    }
 
-		System.out.println();
-		System.out.println();
+    private static ArrayList<Pathway> findPathwaysListWhere(long objectId, long groupId) {
+        ArrayList<Pathway> listOfPathwaysWhere = new ArrayList<Pathway>();
+        for (Pathway pw : listOfPathways) {
+            if (pw.groupId == groupId && pw.individualId == objectId) {
+                listOfPathwaysWhere.add(pw);
+            }
+        }
+        return listOfPathwaysWhere;
+    }
 
-		for (ArrayList<Integer> level0 : levelList) {
-			for (int level1 : level0) {
-				System.out.print(level1 + " ");
-			}
-			System.out.println();
-		}
-	}
+    private static int countPoints(Pathway base, Pathway extra) {
+        int counter = 0;
+        for (int i = 0; i < base.path.size(); i++) {
+            if (i < extra.path.size()) {
+                if (base.path.get(i) == extra.path.get(i)) {
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
+    private void printCompareList(ArrayList<Long> listOfObjectId,
+            ArrayList<ArrayList<Integer>> levelList) {
+        System.out.println("IDs");
+        for (Long id : listOfObjectId) {
+            System.out.print(id + "  ");
+        }
+        System.out.println();
+        System.out.println("------------------------------------");
+
+        for (ArrayList<Integer> level0 : levelList) {
+            // int max = Collections.max(level0);
+            for (int level1 : level0) {
+                // float restul = (float)level1/max;
+                // System.out.printf("%.2f", restul);
+                // System.out.print("  ");
+                System.out.print(level1 + "   ");
+            }
+            System.out.println();
+        }
+    }
 }
